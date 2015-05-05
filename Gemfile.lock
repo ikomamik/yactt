@@ -33,7 +33,7 @@ GEM
     coffee-script (2.4.1)
       coffee-script-source
       execjs
-    coffee-script-source (1.9.1.1)
+    coffee-script-source (1.8.0)
     erubis (2.7.0)
     execjs (2.5.2)
     hike (1.2.3)
@@ -114,6 +114,7 @@ PLATFORMS
 
 DEPENDENCIES
   coffee-rails (= 4.0.1)
+  coffee-script-source (= 1.8.0)
   jbuilder (= 1.0.2)
   jquery-rails (= 3.0.4)
   pg (= 0.15.1)

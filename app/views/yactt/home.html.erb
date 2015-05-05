@@ -1,0 +1,51 @@
+    <h1>Yet Another Combinatorial Testing Tool</h1>
+    <form id="op_load_file" method="POST" action="./load_viewer_param" target="load_work" enctype="multipart/form-data" style="width:40px; display: inline-block; display: inline">
+      <div style="background:gainsboro">
+        <h2>Specify PICT parameters</h2>
+        <p>Select template, upload local parameter file, or write parameters to textarea.</p>
+        Template:
+        <select name="ya_template" id="ya_template">
+          <option value="">select samples</option>
+          <option value="sample1.pict">simple model</option>
+          <option value="sample2.pict">large model</option>
+          <option value="sample3.pict">many constraints</option>
+        </select>&nbsp;
+         Upload:<input type="file" id="ya_paramFile" name="ya_paramFile" value="PICT parameter" />
+        <br/>
+        <textarea name="ya_pictParam" rows="15" cols="80"></textarea>
+        <br/>
+        Value delimiter: <input name="ya_value_delimiter" type="text" size="1" value=","/>,&nbsp;
+        Alias delimiter: <input name="ya_alias_delimiter" type="text" size="1" value="|" />,&nbsp;
+        Prefix of negative value: <input name="ya_negative_prefix" type="text" size="1"  value="~"/>,&nbsp;
+        Case Sensitive: <input name="ya_case_sensitive" type="checkbox" checked/>&nbsp;
+      </div>
+      <div style="background:antiquewhite">
+        <h2>Set execution parameters</h2>
+        Solver:
+        <select name="ya_back_end">
+          <option value="CIT">CIT-BACH</option>
+          <option value="ACTS" disabled>ACTS</option>
+          <option value="ZDD" disabled>ZDD</option>
+          <option value="PICT" disabled>PICT</option>
+        </select>&nbsp;
+        Pair Strength:
+        <select name="ya_pair_strength">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="whole">Whole</option>
+        </select>&nbsp;
+        Seed for randomizing: <input name="ya_random_seed" type="text" size="4" />&nbsp;
+        <br/>
+        Expired Second: <input name="ya_timeout" type="text" size="1" />&nbsp;
+        Verify Results: <input name="ya_verify" type="checkbox" />&nbsp;
+      </div>
+      <div style="background:lightblue">
+        <h2>Submit parameters</h2>
+        <input type="submit"  id="ya_submitFile"  value="Generate Test Data" />
+      </div>
+    </form>
+    <!--<iframe id='load_work' name="load_work" style="display:none"></iframe>-->
+    <iframe width="100%" id='load_work' name="load_work"></iframe>

@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get "yactt/home"
+  get "yactt/help"
+  post "yactt/load_viewer_param"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
