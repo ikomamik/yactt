@@ -1,5 +1,3 @@
-# Ruby on Rails チュートリアル：サンプルアプリケーション
+# Yet Another Combinatorial Testing Tool
 
-This is the first application for the
-[*Ruby on Rails Tutorial*](http://railstutorial.jp/)
-by [Michael Hartl](http://michaelhartl.com/).
+An experimental implementation of PICT clone powered by [CIT-Bach](http://www-ise4.ist.osaka-u.ac.jp/~t-tutiya/CIT/).
