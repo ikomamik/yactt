@@ -1,0 +1,5 @@
+File system:    FAT32, NTFS
+Cluster size:   2048, 4096
+Compression:    on, off
+
+IF NOT  ([File system] = "NTFS" OR  [Cluster size] = 2048) THEN [Compression] = "off";

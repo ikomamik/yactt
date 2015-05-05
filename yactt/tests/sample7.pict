@@ -1,0 +1,15 @@
+Size:           1000, 5000, 10000, 40000
+Size2:          1000, 5000, 10000, 40000
+Format method:  quick|fast, slow|idle
+File system:    FAT, FAT32, NTFS
+Compression:    on, off
+foo:    ON, OFF
+goo:    a, b, c
+
+[size] <> [size2];
+IF [format method] = "QUICK"   THEN [File system] like "fat*";
+IF [File System] = "fat"   THEN [Size] <= 4096;
+IF [File system] = "fat32" THEN [Size] <= 32000;
+IF [compression] = "on" THEN [Format method] = "quick" ELSE [Format method] = "SLOW";
+[Compression] <> [foo];
+if [goo] in {"A", "C"} then [FOO] = "on";

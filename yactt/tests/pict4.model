@@ -1,0 +1,14 @@
+PLATFORM: x86, ia64, amd64
+CPUS:     Single, Dual, Quad
+RAM:      128MB, 1GB, 4GB, 64GB
+HDD:      SCSI, IDE
+OS:       NT4, Win2K, WinXP, Win2K3
+IE:       4.0, 5.0, 5.5, 6.0
+ { PLATFORM, CPUS, RAM, HDD } @ 2
+ { OS, IE } @ 2
+IF [PLATFORM] in {"ia64", "amd64"}
+  # foo
+  THEN [OS] in {"WinXP", "Win2K3"};
+IF [PLATFORM] = "x86" THEN [RAM] <> "64GB";
+
+ 

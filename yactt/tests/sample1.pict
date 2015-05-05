@@ -1,0 +1,11 @@
+Size:           1000, 5000, 10000, 40000
+Size2:          1000, 5000, 10000, 40000
+Format method:  quick|fast, slow
+File system:    FAT, FAT32, NTFS
+Compression:    on, off
+
+[Size] <> [Size2];
+IF [Format method] = "quick"   THEN [File system] like "FAT*";
+IF [File system] = "FAT"   THEN [Size] <= 4096;
+IF [File system] = "FAT32" THEN [Size] <= 32000;
+IF [Compression] = "on" THEN [Format method] = "quick" ELSE [Format method] = "slow";

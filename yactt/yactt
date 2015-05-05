@@ -1,0 +1,4 @@
+#!/bin/sh
+
+RUBYLIB="./"; export RUBYLIB
+ruby "${RUBYLIB}/yactt.rb" $*

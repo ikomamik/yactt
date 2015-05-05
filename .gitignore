@@ -20,3 +20,8 @@ doc/
 .DS_Store
 .idea
 .secret
+
+# Helper part
+/yactt/temp/*
+/yactt/zdd
+/yactt/*.txt
