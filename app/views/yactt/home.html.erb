@@ -6,11 +6,16 @@
         Template:
         <select name="ya_template" id="ya_template">
           <option value="">select samples</option>
-          <option value="sample1.pict">simple model</option>
-          <option value="sample2.pict">large model</option>
-          <option value="sample3.pict">many constraints</option>
+          <option value="sample1.pict" disabled>simple model</option>
+          <option value="sample2.pict" disabled>large model</option>
+          <option value="sample3.pict" disabled>many constraints</option>
         </select>&nbsp;
-         Upload:<input type="file" id="ya_paramFile" name="ya_paramFile" value="PICT parameter" />
+        <form id="ya_load_file" method="POST" target="ya_load_work" action="./load_paramFile" enctype="multipart/form-data" style="width:40px; display: inline-block; display: inline">
+           Upload:<input type="file" id="ya_paramFile" name="ya_paramFile" value="PICT parameter" />
+           <input type="submit" value="load"  id="ya_submitParamFile" style="display:none" />
+        </form>
+        <iframe id="ya_load_work" name="ya_load_work" style="display:none"></iframe>
+
         <br/>
         <textarea name="ya_pictParam" rows="15" cols="80"></textarea>
         <br/>
@@ -30,12 +35,12 @@
         </select>&nbsp;
         Pair Strength:
         <select name="ya_pair_strength">
-          <option value="1">1</option>
+          <option value="1" disabled>1</option>
           <option value="2" selected>2</option>
           <option value="3">3</option>
           <option value="4">4</option>
           <option value="5">5</option>
-          <option value="whole">Whole</option>
+          <option value="whole" disabled>Whole</option>
         </select>&nbsp;
         Seed for randomizing: <input name="ya_random_seed" type="text" size="4" />&nbsp;
         <br/>
