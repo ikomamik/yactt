@@ -2,6 +2,12 @@ require "pp"
 require "tempfile"
 
 class YacttController < ApplicationController
+  def load_pict_param
+    puts "PICT"
+    @ya_pict_param = params[:ya_paramFile].tempfile.read
+    pp @ya_pict_param
+  end
+  
   def load_viewer_param
     pp params
     puts "FOO"

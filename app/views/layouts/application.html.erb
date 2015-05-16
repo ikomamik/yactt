@@ -10,23 +10,23 @@
     $(function() {
       // PICTファイルアップロード指定時の処理
       $('#ya_paramFile').change(function(event) {
-        alert("foo");
-        $('#ya_submitParamFile').submit();
-        alert("goo");
+        $('#ya_load_file').submit();
       });
 
       // ファイルアップロードが完了した時の処理
       $("#ya_load_work").load(function() {
         // アップロードされたファイルは、ワークのiframeに応答がある
         // のでそこから持ってくる
-        var json_data = $(this).contents().find("#loaded_js").text();
-        if(json_data.length > 0){
-          alarm(json_data);
-          var json_obj = $.parseJSON(json_data);
-          // do something
-        } else {
-          alarm("error");
-        }
+        var pict_param = $(this).contents().find('#ya_loaded_pict_param').text();
+        $('#ya_pictParam').val(pict_param);
+      });
+      
+      // ソルバの結果がロード完了した時の処理
+      $("#ya_result_work").load(function() {
+        // 結果がロードされた時、ワークのiframeに応答があるのでそこから持ってくる
+        var results = $(this).contents().find('#ya_results_work').text();
+        $('#ya_result_div').show();
+        $('#ya_result').text(results);
       });
       
     });
