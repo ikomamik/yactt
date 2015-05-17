@@ -16,16 +16,16 @@ class YacttController < ApplicationController
   end
   
   def cit_bach(params)
-    path = Tempfile.open("cit_bach_temp"){|fp|
-      fp.print params["ya_pictParam"]
-      fp.path
-    }
-    params["ya_model_file"] = path
+    fp = Tempfile.open("cit_bach_temp")
+    fp.print params["ya_pictParam"]
+    fp.flush
+    params["ya_model_file"] = fp.path
     options = convert_params(params)
     Dir.chdir("./yactt") do | yactt_path |
       require_dependency "./yactt.rb"
       @ya_cit_results = yactt_lib(options)
     end
+    fp.close!
   end
   
   def convert_params(post_params)
@@ -46,15 +46,16 @@ class YacttController < ApplicationController
   end
   
   def exec_cit_bach(params)
-    path = Tempfile.open("cit_bach_temp"){|fp|
-      fp.print params["ya_pictParam"]
-      fp.path
-    }
+    fp = Tempfile.open("cit_bach_temp")
+    fp.print params["ya_pictParam"]
+    fp.flush
+    path = fp.path
     flags = set_flags(params)
     command = "./yactt #{flags} #{path}"
     puts "cd yactt; #{command}"
     # system("cd yactt; #{command}")
     @ya_cit_results = `cd yactt; #{command} 2>&1`
+    fp.close!
   end
   
   def set_flags(params)
