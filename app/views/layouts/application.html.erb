@@ -10,6 +10,7 @@
     $(function() {
       // PICTファイルアップロード指定時の処理
       $('#ya_paramFile').change(function(event) {
+        $('#ya_result_work').hide();
         $('#ya_load_file').submit();
       });
 
@@ -24,9 +25,14 @@
       // ソルバの結果がロード完了した時の処理
       $("#ya_result_work").load(function() {
         // 結果がロードされた時、ワークのiframeに応答があるのでそこから持ってくる
-        var results = $(this).contents().find('#ya_results_work').text();
-        $('#ya_result_div').show();
-        $('#ya_result').text(results);
+        var results = $(this).contents().find('#ya_results_work');
+        if(results.length > 0) {
+          $('#ya_result_work').hide();
+          $('#ya_result').text(results.text());
+        } else {
+          $('#ya_result').text('Failed');
+          $('#ya_result_work').show();
+        }
       });
       
     });
