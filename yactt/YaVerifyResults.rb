@@ -1,18 +1,18 @@
 # encoding: utf-8
 require "pp"
 
-# ƒoƒbƒNƒGƒ“ƒh‚ªo—Í‚µ‚½ƒf[ƒ^‚ğZDD‚ÅŒŸØ‚·‚éƒNƒ‰ƒX
+# ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰ãŒå‡ºåŠ›ã—ãŸãƒ‡ãƒ¼ã‚¿ã‚’ZDDã§æ¤œè¨¼ã™ã‚‹ã‚¯ãƒ©ã‚¹
 class YaVerifyResults
   require "./zdd/lib/zdd"
   
-  # ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+  # ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
   def self.verify(params, model_front, results)
     command_options = params.options
-    solver_params   = model_front.solver_params # “ü—Í‚³‚ê‚½ƒpƒ‰ƒƒ^
-    submodels = model_front.submodels     # ƒTƒuƒ‚ƒfƒ‹
+    solver_params   = model_front.solver_params # å…¥åŠ›ã•ã‚ŒãŸãƒ‘ãƒ©ãƒ¡ã‚¿
+    submodels = model_front.submodels     # ã‚µãƒ–ãƒ¢ãƒ‡ãƒ«
     strength = command_options[:strength] || 2
     
-    zdd_params = {}    # ZDD‚ÅŠÇ—‚·‚éƒpƒ‰ƒƒ^
+    zdd_params = {}    # ZDDã§ç®¡ç†ã™ã‚‹ãƒ‘ãƒ©ãƒ¡ã‚¿
     test_set = get_test_set(solver_params, model_front, zdd_params)
     
     zdd_results = eval(results.join("+"))
@@ -28,13 +28,13 @@ class YaVerifyResults
     check_results(test_set, all_combi, zdd_results, strength, model_front)
   end
   
-  # ZDD‚Ìƒpƒ‰ƒƒ^İ’è
+  # ZDDã®ãƒ‘ãƒ©ãƒ¡ã‚¿è¨­å®š
   def self.get_test_set(solver_params, model_front, zdd_params)
     restricts = model_front.restricts
     negative_values = model_front.negative_values
     base_tests = model_front.base_tests
     
-    # ƒpƒ‰ƒƒ^’è‹`‚ÌƒZƒbƒg
+    # ãƒ‘ãƒ©ãƒ¡ã‚¿å®šç¾©ã®ã‚»ãƒƒãƒˆ
     test_set  = ZDD.constant(1)
     solver_params.each do | param_name, values |
       zdd_params[param_name]  = ZDD.constant(0)
@@ -49,7 +49,7 @@ class YaVerifyResults
     
     old_count = test_set.count
     
-    # §–ñğŒ‚ÌƒZƒbƒg
+    # åˆ¶ç´„æ¡ä»¶ã®ã‚»ãƒƒãƒˆ
     # pp restricts
     zdd_params[:restrict] = restricts.map { | restrict |
       results = {}
@@ -59,19 +59,19 @@ class YaVerifyResults
       results
     }
     pp zdd_params[:restrict]
-    # –¾¦“I‚Éw’è‚³‚ê‚½§–ñğŒ‚É]‚Á‚Ä€–Ú‚ğíŒ¸
+    # æ˜ç¤ºçš„ã«æŒ‡å®šã•ã‚ŒãŸåˆ¶ç´„æ¡ä»¶ã«å¾“ã£ã¦é …ç›®ã‚’å‰Šæ¸›
     test_set = apply_restrict(zdd_params, test_set)
     
-    # ƒlƒKƒeƒBƒu’l‚É‚æ‚é§–ñ‚É]‚Á‚Ä€–Ú‚ğíŒ¸
+    # ãƒã‚¬ãƒ†ã‚£ãƒ–å€¤ã«ã‚ˆã‚‹åˆ¶ç´„ã«å¾“ã£ã¦é …ç›®ã‚’å‰Šæ¸›
     test_set = negative_constraint(test_set, negative_values)
 
     # puts "count #{old_count} --> #{test_set.count}"
     
-    # §–ñğŒ‚ğ–‚½‚·‚·‚×‚Ä‚ÌƒeƒXƒg€–Ú
+    # åˆ¶ç´„æ¡ä»¶ã‚’æº€ãŸã™ã™ã¹ã¦ã®ãƒ†ã‚¹ãƒˆé …ç›®
     test_set
   end
 
-  # §–ñğŒ‚É]‚¢AƒeƒXƒg€–Ú‚ğíŒ¸
+  # åˆ¶ç´„æ¡ä»¶ã«å¾“ã„ã€ãƒ†ã‚¹ãƒˆé …ç›®ã‚’å‰Šæ¸›
   def self.apply_restrict(zdd_params, test)
     zdd_params[:restrict].each do | restrict |
       if(restrict[:if] && restrict[:else])
@@ -90,7 +90,7 @@ class YaVerifyResults
     test
   end
 
-  # ƒlƒKƒeƒBƒu’l‚É‚æ‚é§–ñ‚É]‚Á‚Ä€–Ú‚ğíŒ¸(ˆ—•û–@‚ÌH•v‚ª•K—vj
+  # ãƒã‚¬ãƒ†ã‚£ãƒ–å€¤ã«ã‚ˆã‚‹åˆ¶ç´„ã«å¾“ã£ã¦é …ç›®ã‚’å‰Šæ¸›(å‡¦ç†æ–¹æ³•ã®å·¥å¤«ãŒå¿…è¦ï¼‰
   def self.negative_constraint(test_set, negative_values)
     if(negative_values.size() > 0)
       negative_condition = ZDD.constant(0)
@@ -98,11 +98,11 @@ class YaVerifyResults
         negative_condition += ZDD.itemset(negative_value)
       end
       
-      # ƒlƒKƒeƒBƒu’l‚ªd‚È‚Á‚Ä‚¢‚éƒeƒXƒg€–Ú‚ğíŒ¸
+      # ãƒã‚¬ãƒ†ã‚£ãƒ–å€¤ãŒé‡ãªã£ã¦ã„ã‚‹ãƒ†ã‚¹ãƒˆé …ç›®ã‚’å‰Šæ¸›
       test_set -= test_set.restrict((negative_condition * negative_condition)/2)
       
       #pp test_set
-      # ŒÃ‚¢˜_—B‚±‚ê‚æ‚è‚Íã‹L‚Ìˆ—‚Ì‚Ù‚¤‚ªƒxƒ^[‚¾‚Æv‚¤‚ª...
+      # å¤ã„è«–ç†ã€‚ã“ã‚Œã‚ˆã‚Šã¯ä¸Šè¨˜ã®å‡¦ç†ã®ã»ã†ãŒãƒ™ã‚¿ãƒ¼ã ã¨æ€ã†ãŒ...
       # negative_condition = ZDD.constant(1)
       # negative_values.each do | negative_value |
       #   negative_condition += ZDD.itemset(negative_value)
@@ -114,13 +114,13 @@ class YaVerifyResults
     test_set
   end
 
-  # ƒI[ƒ‹ƒyƒA‚Ì‰¼À‘•
+  # ã‚ªãƒ¼ãƒ«ãƒšã‚¢ã®ä»®å®Ÿè£…
   def self.get_whole_combination(zdd_params, solver_params, test_set, submodels, strength = 2)
 
-    # ‘S‘Ì‚Ì‘g‡‚¹‚ğ“¾‚é
+    # å…¨ä½“ã®çµ„åˆã›ã‚’å¾—ã‚‹
     all_combi = get_basic_combination(zdd_params, solver_params, strength)
     
-    # ƒTƒuƒ‚ƒfƒ‹‚Ì‘g‡‚¹‚ğ‰Á‚¦‚é
+    # ã‚µãƒ–ãƒ¢ãƒ‡ãƒ«ã®çµ„åˆã›ã‚’åŠ ãˆã‚‹
     submodels.each do | submodel |
       # pp submodel
       if(submodel[:strength] > strength)
@@ -128,18 +128,18 @@ class YaVerifyResults
       end
     end
     
-    # Še€‚Ì‚¤‚¿A•ïŠÜ‚µ‚Ä‚¢‚é‚à‚Ì‚ğíœiˆ—•û–@‚ÌÄŒŸ“¢—vj
+    # å„é …ã®ã†ã¡ã€åŒ…å«ã—ã¦ã„ã‚‹ã‚‚ã®ã‚’å‰Šé™¤ï¼ˆå‡¦ç†æ–¹æ³•ã®å†æ¤œè¨è¦ï¼‰
     # pp all_combi.count
     work = all_combi.freqpatC(2)
     work -= work.permitsym(strength - 1)
     all_combi -= work
     
-    # §–ñ€–Ú‚É”½‚µ‚Ä‚¢‚é‚à‚Ì‚Ìíœ‚µ‚æ‚¤‚Æv‚Á‚½‚ªAŠù‘¶ˆ—‚Å‚Íƒ_ƒ‚¾‚Á‚½
-    # §–ñ€–Ú‚Æ‚ÍŠÖŒW‚È‚¢€‚Ü‚Åíœ‚³‚ê‚Ä‚µ‚Ü‚¤B
+    # åˆ¶ç´„é …ç›®ã«åã—ã¦ã„ã‚‹ã‚‚ã®ã®å‰Šé™¤ã—ã‚ˆã†ã¨æ€ã£ãŸãŒã€æ—¢å­˜å‡¦ç†ã§ã¯ãƒ€ãƒ¡ã ã£ãŸ
+    # åˆ¶ç´„é …ç›®ã¨ã¯é–¢ä¿‚ãªã„é …ã¾ã§å‰Šé™¤ã•ã‚Œã¦ã—ã¾ã†ã€‚
     # all_combi = apply_restrict2(all_combi)
     # pp all_combi
     # exit
-    # «”\“I‚É–â‘è‚Èˆ—‚¾‚ªA‚¢‚Ü‚Ì‚Æ‚±‚ë‚±‚ÌƒAƒ‹ƒSƒŠƒYƒ€
+    # æ€§èƒ½çš„ã«å•é¡Œãªå‡¦ç†ã ãŒã€ã„ã¾ã®ã¨ã“ã‚ã“ã®ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ 
     invalid_combi = ZDD.constant(0)
     all_combi.each do | term |
       if((test_set/term).count == 0)
@@ -150,22 +150,22 @@ class YaVerifyResults
     
   end
 
-  # ‚ ‚é‹­“x‚Å‚Ì‚·‚×‚Ä‚Ì‘g‡‚¹‚ğ“¾‚é(zdd‘¤‚Ìƒ‰ƒCƒuƒ‰ƒŠ‚ğg‚Á‚½À‘•j
+  # ã‚ã‚‹å¼·åº¦ã§ã®ã™ã¹ã¦ã®çµ„åˆã›ã‚’å¾—ã‚‹(zddå´ã®ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’ä½¿ã£ãŸå®Ÿè£…ï¼‰
   def self.get_basic_combination(zdd_params, solver_params, strength)
     test_combi = ZDD.constant(1)
     solver_params.each do | param_name, values |
       test_combi *= (zdd_params[param_name] + 1)
     end
-    # ‚ ‚é‹­“x‚Å‚Ì‚·‚×‚Ä‚Ì‘g‡‚¹
+    # ã‚ã‚‹å¼·åº¦ã§ã®ã™ã¹ã¦ã®çµ„åˆã›
     all_combi = test_combi.permitsym(strength) - test_combi.permitsym(strength-1)
     # puts "combi count = #{all_combi.count}"
     all_combi
   end
   
-  # Œ‹‰Ê‚ÌŠm”F
+  # çµæœã®ç¢ºèª
   def self.check_results(test_set, all_combi, zdd_results, strength, model_front)
   
-    # ƒeƒXƒg‚ª(§–ñŒã‚Ì)‘SW‡‚ÌƒTƒuW‡‚Å‚ ‚é‚±‚Æ‚ÌŠm”F
+    # ãƒ†ã‚¹ãƒˆãŒ(åˆ¶ç´„å¾Œã®)å…¨é›†åˆã®ã‚µãƒ–é›†åˆã§ã‚ã‚‹ã“ã¨ã®ç¢ºèª
     invalid_tests = ((test_set - zdd_results)  < 0)
     if(invalid_tests.count == 0)
       puts "== All tests are valid"
@@ -174,10 +174,10 @@ class YaVerifyResults
       model_front.write(invalid_tests.to_s.split(/\s*\+\s*/))
     end
     
-    # ƒeƒXƒg‚ªAƒyƒAƒƒCƒY‚Ì‘g‡‚¹‚ğ‚·‚×‚Ä–‘«‚µ‚Ä‚¢‚é‚±‚Æ‚ÌŠm”F
+    # ãƒ†ã‚¹ãƒˆãŒã€ãƒšã‚¢ãƒ¯ã‚¤ã‚ºã®çµ„åˆã›ã‚’ã™ã¹ã¦æº€è¶³ã—ã¦ã„ã‚‹ã“ã¨ã®ç¢ºèª
     combi = all_combi.meet(test_set)
     combi -= combi.permitsym(strength-1)
-    # d‚İ‚Ìíœ
+    # é‡ã¿ã®å‰Šé™¤
     flat_combi = (combi == combi)
     no_combi = ((all_combi - flat_combi) > 0)
     if(no_combi.count == 0)
@@ -190,7 +190,7 @@ class YaVerifyResults
 
 end
 
-# ƒfƒoƒbƒOƒvƒŠƒ“ƒg
+# ãƒ‡ãƒãƒƒã‚°ãƒ—ãƒªãƒ³ãƒˆ
 def dbgpp(variable, title = nil)
   if($debug)
     puts "===#{title}===" if title
@@ -202,7 +202,7 @@ def dbgpp(variable, title = nil)
   end
 end
 
-# ƒvƒƒtƒ@ƒCƒ‰‚ğ—LŒø‚É‚·‚é‚½‚ß‚Ì‚¨‚Ü‚¶‚È‚¢
+# ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ©ã‚’æœ‰åŠ¹ã«ã™ã‚‹ãŸã‚ã®ãŠã¾ã˜ãªã„
 module ZDD
   #def self.to_s
   #  self.name

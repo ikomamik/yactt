@@ -1,45 +1,45 @@
 # encoding: utf-8
 require "pp"
 
-# PICTƒtƒƒ“ƒg‚Æ•W€Œ`®iÏ˜aŒ`®j‚Ì•ÏŠ·‚ğs‚¤ƒNƒ‰ƒX
+# PICTãƒ•ãƒ­ãƒ³ãƒˆã¨æ¨™æº–å½¢å¼ï¼ˆç©å’Œå½¢å¼ï¼‰ã®å¤‰æ›ã‚’è¡Œã†ã‚¯ãƒ©ã‚¹
 
-# PICTƒpƒ‰ƒƒ^‚Ì“Ç‚İ‚İ
+# PICTãƒ‘ãƒ©ãƒ¡ã‚¿ã®èª­ã¿è¾¼ã¿
 class YaFrontPict
   def initialize(params)
     @options = params.options
-    @pict_model_file = @options[:model_file] # ’è‹`ƒtƒ@ƒCƒ‹
-    @pict_seed_file = @options[:seed_file]   # -i‚Åw’è‚µ‚½ƒV[ƒhƒtƒ@ƒCƒ‹
+    @pict_model_file = @options[:model_file] # å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
+    @pict_seed_file = @options[:seed_file]   # -iã§æŒ‡å®šã—ãŸã‚·ãƒ¼ãƒ‰ãƒ•ã‚¡ã‚¤ãƒ«
     
-    @pict_params = {}     # PICT‚Å’è‹`‚³‚ê‚½ƒpƒ‰ƒƒ^
+    @pict_params = {}     # PICTã§å®šç¾©ã•ã‚ŒãŸãƒ‘ãƒ©ãƒ¡ã‚¿
     
-    @solver_params = {}   # ”Ä—p‚Ìƒ\ƒ‹ƒo‚Åg—p‚·‚éƒpƒ‰ƒƒ^
-    @negative_values = [] # ƒlƒKƒeƒBƒu‚ªw’è‚³‚ê‚½’l‚Ì”z—ñ
-    @restricts = []       # §–ñ‚Ìî•ñ
-    @submodels = []       # ƒTƒuƒ‚ƒfƒ‹‚Ìî•ñ
-    @base_tests = nil     # ƒV[ƒh‚Æ‚µ‚Ä—^‚¦‚éŠî–{“I‚ÈƒeƒXƒg
+    @solver_params = {}   # æ±ç”¨ã®ã‚½ãƒ«ãƒã§ä½¿ç”¨ã™ã‚‹ãƒ‘ãƒ©ãƒ¡ã‚¿
+    @negative_values = [] # ãƒã‚¬ãƒ†ã‚£ãƒ–ãŒæŒ‡å®šã•ã‚ŒãŸå€¤ã®é…åˆ—
+    @restricts = []       # åˆ¶ç´„ã®æƒ…å ±
+    @submodels = []       # ã‚µãƒ–ãƒ¢ãƒ‡ãƒ«ã®æƒ…å ±
+    @base_tests = nil     # ã‚·ãƒ¼ãƒ‰ã¨ã—ã¦ä¸ãˆã‚‹åŸºæœ¬çš„ãªãƒ†ã‚¹ãƒˆ
     
-    @name_map = {}       # ƒ\ƒ‹ƒo‚Ìƒpƒ‰ƒƒ^–¼¨PICT‚Ìƒpƒ‰ƒƒ^–¼‚Ìƒ}ƒbƒv
-    @name_map2 = {}      # PICT‚Ìƒpƒ‰ƒƒ^–¼¨ƒ\ƒ‹ƒo‚Ìƒpƒ‰ƒƒ^–¼‚Ìƒ}ƒbƒv
-    @param_expr       # ƒpƒ‰ƒƒ^’è‹`•¶‚Ì³‹K•\Œ»
-    @sub_expr         # •”•ª“I‚È‹­“x‚Ìd‚İw’è‚Ì³‹K•\Œ»
-    @ifclause_expr    # if•¶‚Ì®‚Ì³‹K•\Œ»
-    @uncond_expr      # –³ğŒ§–ñ‚Ì³‹K•\Œ»
-    @term_expr        # §–ñ‚Ì³‹K•\Œ»
+    @name_map = {}       # ã‚½ãƒ«ãƒã®ãƒ‘ãƒ©ãƒ¡ã‚¿åâ†’PICTã®ãƒ‘ãƒ©ãƒ¡ã‚¿åã®ãƒãƒƒãƒ—
+    @name_map2 = {}      # PICTã®ãƒ‘ãƒ©ãƒ¡ã‚¿åâ†’ã‚½ãƒ«ãƒã®ãƒ‘ãƒ©ãƒ¡ã‚¿åã®ãƒãƒƒãƒ—
+    @param_expr       # ãƒ‘ãƒ©ãƒ¡ã‚¿å®šç¾©æ–‡ã®æ­£è¦è¡¨ç¾
+    @sub_expr         # éƒ¨åˆ†çš„ãªå¼·åº¦ã®é‡ã¿æŒ‡å®šã®æ­£è¦è¡¨ç¾
+    @ifclause_expr    # ifæ–‡ã®å¼ã®æ­£è¦è¡¨ç¾
+    @uncond_expr      # ç„¡æ¡ä»¶åˆ¶ç´„ã®æ­£è¦è¡¨ç¾
+    @term_expr        # åˆ¶ç´„ã®æ­£è¦è¡¨ç¾
     @logic_ope = { "AND" => "*", "OR" => "+", "NOT" => "-" }
-    @value_delim = @options[:value_delimiter] || "," # ’l‚Ì‹æØ‚è•¶š
-    @alias_delim = @options[:alias_delimiter] || "|" # •Ê–¼‚Ì‹æØ‚è•¶š
-    @negative_prefix = @options[:negative_prefix] || "~"     # ƒlƒKƒeƒBƒuƒeƒXƒg‚Ì•¶š
-    @rotate_hash = {}  # alias‚ª‚ ‚éê‡‚ÌŒ‹‰Ê‚Ì•\¦‚Ég‚¤ƒnƒbƒVƒ…
+    @value_delim = @options[:value_delimiter] || "," # å€¤ã®åŒºåˆ‡ã‚Šæ–‡å­—
+    @alias_delim = @options[:alias_delimiter] || "|" # åˆ¥åã®åŒºåˆ‡ã‚Šæ–‡å­—
+    @negative_prefix = @options[:negative_prefix] || "~"     # ãƒã‚¬ãƒ†ã‚£ãƒ–ãƒ†ã‚¹ãƒˆã®æ–‡å­—
+    @rotate_hash = {}  # aliasãŒã‚ã‚‹å ´åˆã®çµæœã®è¡¨ç¤ºã«ä½¿ã†ãƒãƒƒã‚·ãƒ¥
 
-    set_reg_expr      # if•¶‚Ì®‚È‚Ç‚Ì•]‰¿‚Ég‚¤³‹K•\Œ»‚ğİ’è
+    set_reg_expr      # ifæ–‡ã®å¼ãªã©ã®è©•ä¾¡ã«ä½¿ã†æ­£è¦è¡¨ç¾ã‚’è¨­å®š
     analyze_model_file()
     analyze_seed_file()
   end
   
-  # ƒAƒNƒZƒTigetter‚Ì‚İj‚Ì’è‹`
+  # ã‚¢ã‚¯ã‚»ã‚µï¼ˆgetterã®ã¿ï¼‰ã®å®šç¾©
   attr_reader :solver_params, :negative_values, :restricts, :submodels, :base_tests, :pict_params
 
-  # if•¶‚Ì®‚È‚Ç‚Ì•]‰¿‚Ég‚¤³‹K•\Œ»‚ğİ’è
+  # ifæ–‡ã®å¼ãªã©ã®è©•ä¾¡ã«ä½¿ã†æ­£è¦è¡¨ç¾ã‚’è¨­å®š
   def set_reg_expr
     @param_expr    = /^\s*([^:]+):\s*(.+)$/
     @value_expr    = /^(#{@negative_prefix})?([^\(]+)(?:\((\d+)\))?$/
@@ -52,24 +52,24 @@ class YaFrontPict
     val_expr   = '(?:(\-?\d+|\".+?\")|\[(.+?)\]|\{(.+?)\})'
     @term_expr = /#{prm_expr}\s*#{ope_expr}\s*#{val_expr}/i
     
-    # §–ñğŒ‚ÌŠe—v‘f‚ÌƒVƒ“ƒ^ƒbƒNƒXi•s³‚È•¶š—ñ‚ÌŒŸo‚Ì‚½‚ßj
+    # åˆ¶ç´„æ¡ä»¶ã®å„è¦ç´ ã®ã‚·ãƒ³ã‚¿ãƒƒã‚¯ã‚¹ï¼ˆä¸æ­£ãªæ–‡å­—åˆ—ã®æ¤œå‡ºã®ãŸã‚ï¼‰
     @restrict_expr = /(?:\s+|[\(\)\*\+\-]|\@p\d+_\d+)/
 
   end
   
-  # ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚Ì‰ğÍ
+  # ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®è§£æ
   def analyze_model_file()
     content = IO.read(@pict_model_file) rescue raise("Model file(#{@pict_model_file}) not found")
     
-    # ƒRƒƒ“ƒg‚Ìíœ
+    # ã‚³ãƒ¡ãƒ³ãƒˆã®å‰Šé™¤
     content.gsub!(/#.+$/, "")
     
-    # ƒpƒ‰ƒƒ^‚Ì’è‹`•”•ª‚Ì‰ğÍi‰ğÍI—¹Œãíœj
+    # ãƒ‘ãƒ©ãƒ¡ã‚¿ã®å®šç¾©éƒ¨åˆ†ã®è§£æï¼ˆè§£æçµ‚äº†å¾Œå‰Šé™¤ï¼‰
     content.gsub!(@param_expr){
       param = $1
       values = $2
       work = values.gsub(/\s+/, "").split(@value_delim)
-      # d‚İ‚Í‰ğÍ‘ÎÛŠO
+      # é‡ã¿ã¯è§£æå¯¾è±¡å¤–
       param_collate = @options[:case_sensitive]?param:param.downcase
       @pict_params[param_collate] = work.map{|value|
         if(!md = value.match(@value_expr))
@@ -87,7 +87,7 @@ class YaFrontPict
     }
     analyze_params
     
-    # ƒTƒuƒ‚ƒfƒ‹’è‹`•”•ª‚Ì‰ğÍi‰ğÍI—¹Œãíœj
+    # ã‚µãƒ–ãƒ¢ãƒ‡ãƒ«å®šç¾©éƒ¨åˆ†ã®è§£æï¼ˆè§£æçµ‚äº†å¾Œå‰Šé™¤ï¼‰
     content.gsub!(@sub_expr) {
       params = $1
       strength = $2
@@ -102,7 +102,7 @@ class YaFrontPict
       ""
     }
         
-    #IF‚Ì’è‹`•”•ª‚Ì‰ğÍi‰ğÍI—¹Œãíœj
+    #IFã®å®šç¾©éƒ¨åˆ†ã®è§£æï¼ˆè§£æçµ‚äº†å¾Œå‰Šé™¤ï¼‰
     content.gsub!(@ifclause_expr) {
       if_clause = $1
       then_clause = $2
@@ -116,7 +116,7 @@ class YaFrontPict
       ""
     }
     
-    #–³ğŒ§–ñ‚Ì’è‹`•”•ª‚Ì‰ğÍi‰ğÍI—¹Œãíœj
+    #ç„¡æ¡ä»¶åˆ¶ç´„ã®å®šç¾©éƒ¨åˆ†ã®è§£æï¼ˆè§£æçµ‚äº†å¾Œå‰Šé™¤ï¼‰
     content.gsub!(@uncond_expr) {
       uncond_clause = $1
       @restricts.push({ :uncond => analyze_restrict("uncond", uncond_clause) })
@@ -124,25 +124,25 @@ class YaFrontPict
     }
     # pp @restricts
     
-    # ‹ós‚Ìíœ
+    # ç©ºè¡Œã®å‰Šé™¤
     content.gsub!(/^\s+$/, "")
     
-    # ‰ğÍ‘ÎÛˆÈŠO‚Ì•¶š—ñ‚ªc‚Á‚Ä‚¢‚½ê‡‚ÍƒGƒ‰[
+    # è§£æå¯¾è±¡ä»¥å¤–ã®æ–‡å­—åˆ—ãŒæ®‹ã£ã¦ã„ãŸå ´åˆã¯ã‚¨ãƒ©ãƒ¼
     if(content.length > 0)
       raise "Syntax error in model file(#{@pict_model_file}). " +
             "Failed to analyze following line(s)\n#{content}"
     end
   end
   
-  # ƒpƒ‰ƒƒ^‚Ì’è‹`•”•ª‚Ì‰ğÍ
+  # ãƒ‘ãƒ©ãƒ¡ã‚¿ã®å®šç¾©éƒ¨åˆ†ã®è§£æ
   def analyze_params()
     @pict_params.keys.each_with_index do | param_collate, i |
-      # PICTƒpƒ‰ƒƒ^‚Æƒ\ƒ‹ƒoƒpƒ‰ƒƒ^‚Ì–¼Ì‚Ì•ÏŠ·ƒ}ƒbƒv‚Ìİ’è
+      # PICTãƒ‘ãƒ©ãƒ¡ã‚¿ã¨ã‚½ãƒ«ãƒãƒ‘ãƒ©ãƒ¡ã‚¿ã®åç§°ã®å¤‰æ›ãƒãƒƒãƒ—ã®è¨­å®š
       param_name = "@p#{i}"
       @name_map[param_name] = param_collate
       @name_map2[param_collate] = param_name
 
-      # ƒ\ƒ‹ƒoƒpƒ‰ƒƒ^‚Ìİ’è
+      # ã‚½ãƒ«ãƒãƒ‘ãƒ©ãƒ¡ã‚¿ã®è¨­å®š
       @solver_params[param_name] = []
       @pict_params[param_collate].each_with_index do | elem, j|
         solver_name = "#{param_name}_#{j}"
@@ -156,7 +156,7 @@ class YaFrontPict
     # pp @solver_params
   end
   
-  # §–ñ‚Ì’è‹`•”•ª‚Ì‰ğÍ
+  # åˆ¶ç´„ã®å®šç¾©éƒ¨åˆ†ã®è§£æ
   def analyze_restrict(type, clause)
     if(clause)
       clause.gsub!(/\r?\n/, " ")
@@ -186,7 +186,7 @@ class YaFrontPict
           raise "internal error"
         end
         
-        # ƒJƒbƒR‚ğ‚Â‚¯‚Ä•Ô‚·
+        # ã‚«ãƒƒã‚³ã‚’ã¤ã‘ã¦è¿”ã™
         "(#{new_term})"
       }
       clause.gsub!(/(or|and|not)/i) { @logic_ope[$1.upcase] }
@@ -197,7 +197,7 @@ class YaFrontPict
     clause
   end
   
-  # §–ñğŒ‚Ì•¶–@‚Ìƒ`ƒFƒbƒN
+  # åˆ¶ç´„æ¡ä»¶ã®æ–‡æ³•ã®ãƒã‚§ãƒƒã‚¯
   def check_restrict_syntax(clause)
     if(clause)
       invalid_string = clause.gsub(@restrict_expr, "")
@@ -207,7 +207,7 @@ class YaFrontPict
     end
   end
 
-  # [Param] = value‚Ìƒpƒ^[ƒ“‚Ì‰ğÍ
+  # [Param] = valueã®ãƒ‘ã‚¿ãƒ¼ãƒ³ã®è§£æ
   def convert_term_value(clause, param_collate, ope, value)
     param = @pict_params[param_collate][0][:param]
     new_term = ""
@@ -215,7 +215,7 @@ class YaFrontPict
     when "="
       value.gsub!(/^"|"$/, "")
       collate = @options[:case_sensitive]?value:value.downcase
-      # •Ê–¼‚Ìê‡AÅ‰‚ÌƒGƒ“ƒgƒŠ‚ğƒT[ƒ`
+      # åˆ¥åã®å ´åˆã€æœ€åˆã®ã‚¨ãƒ³ãƒˆãƒªã‚’ã‚µãƒ¼ãƒ
       if(index = @pict_params[param_collate].index {|info| info[:collate][0] == collate})
         new_term = "#{@name_map2[param_collate]}_#{index}"
       else
@@ -251,7 +251,7 @@ class YaFrontPict
     new_term
   end
   
-  # [Param] = [Param2]‚Ìƒpƒ^[ƒ“‚Ì‰ğÍ
+  # [Param] = [Param2]ã®ãƒ‘ã‚¿ãƒ¼ãƒ³ã®è§£æ
   def convert_term_param2(clause, param_collate, ope, param2_collate)
     ope = "!=" if(ope == "<>")
     ope = "==" if(ope == "=")
@@ -269,7 +269,7 @@ class YaFrontPict
     new_term = new_elems.join("+")
   end
   
-  # [Param] IN { val1, val2 }‚Ìƒpƒ^[ƒ“‚Ì‰ğÍ
+  # [Param] IN { val1, val2 }ã®ãƒ‘ã‚¿ãƒ¼ãƒ³ã®è§£æ
   def convert_term_val_list(clause, param_collate, ope, val_list)
     raise "#{clause} error, [p] IN {v1, v2}" if(!ope.match(/^in$/i))
     param = @pict_params[param_collate][0][:param]
@@ -279,7 +279,7 @@ class YaFrontPict
     val_list.split(/\s*#{@value_delim}\s*/).each do | value |
       value.gsub!(/^"|"$/, "")
       collate = @options[:case_sensitive]?value:value.downcase
-      # •Ê–¼‚Ìê‡AÅ‰‚ÌƒGƒ“ƒgƒŠ‚ğƒT[ƒ`
+      # åˆ¥åã®å ´åˆã€æœ€åˆã®ã‚¨ãƒ³ãƒˆãƒªã‚’ã‚µãƒ¼ãƒ
       if(index = @pict_params[param_collate].index {|info| info[:collate][0] == collate})
         new_elems.push "#{@name_map2[param_collate]}_#{index}"
       else
@@ -289,16 +289,16 @@ class YaFrontPict
     new_term = new_elems.join("+")
   end
 
-  # ƒV[ƒhƒtƒ@ƒCƒ‹‚Ì‰ğÍ
+  # ã‚·ãƒ¼ãƒ‰ãƒ•ã‚¡ã‚¤ãƒ«ã®è§£æ
   def analyze_seed_file()
     if(@pict_seed_file)
       content = IO.read(@pict_seed_file) rescue raise("Seed file(#{@pict_seed_file}) not found")
       lines = content.split("\n")
       
-      # ƒwƒbƒ_•”•ª‚Ì“Ç‚İ‚İ
+      # ãƒ˜ãƒƒãƒ€éƒ¨åˆ†ã®èª­ã¿è¾¼ã¿
       header_elems = lines[0].split(/\t/)
       
-      # ƒRƒ“ƒeƒ“ƒc•”•ª‚Ì“Ç‚İ‚İA•ÏŠ·
+      # ã‚³ãƒ³ãƒ†ãƒ³ãƒ„éƒ¨åˆ†ã®èª­ã¿è¾¼ã¿ã€å¤‰æ›
       tests = lines[1..-1].map do | line |
         values = line.split(/\s+/).map.with_index do | value, i |
           param_collate = @options[:case_sensitive]?(header_elems[i]):(header_elems[i].downcase)
@@ -313,21 +313,21 @@ class YaFrontPict
     end
   end
 
-  # Œ‹‰Ê‚Ì•\¦iƒƒCƒ“ƒ‹[ƒ`ƒ“‚©‚çŒÄ‚Ño‚³‚ê‚éj
+  # çµæœã®è¡¨ç¤ºï¼ˆãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒãƒ³ã‹ã‚‰å‘¼ã³å‡ºã•ã‚Œã‚‹ï¼‰
   def write(results)
     results_string = ""
-    # ƒwƒbƒ_‚Ì•\¦
+    # ãƒ˜ãƒƒãƒ€ã®è¡¨ç¤º
     results_string += @pict_params.values.map{|elem| elem[0][:param]}.join("\t") + "\n"
     print results_string
     
-    # ƒeƒXƒg‚Ì•\¦
+    # ãƒ†ã‚¹ãƒˆã®è¡¨ç¤º
     results.each do | result |
       results_string += write_result(result)
     end
     results_string
   end
     
-  # ¶¬‚³‚ê‚½ˆê‚Â‚ÌƒeƒXƒg‚ğ®Œ`‚µ‚Äo—Í
+  # ç”Ÿæˆã•ã‚ŒãŸä¸€ã¤ã®ãƒ†ã‚¹ãƒˆã‚’æ•´å½¢ã—ã¦å‡ºåŠ›
   def write_result(result)
     elems = result.split(/(?:\s+|\s*\*\s*)/).map do |solver_value|
       elem = solver_value.split("_")

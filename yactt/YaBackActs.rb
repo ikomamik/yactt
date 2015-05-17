@@ -3,21 +3,21 @@ require "pp"
 require "tempfile"
 require "kconv"
 
-# ACTS‚É‚æ‚éƒoƒbƒNƒGƒ“ƒhˆ—
+# ACTSã«ã‚ˆã‚‹ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰å‡¦ç†
 class YaBackActs
   
-  # ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+  # ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
   def initialize(params, model_front)
     @command_options = params.options
     @model_front = model_front
-    @params    = model_front.solver_params # “ü—Í‚³‚ê‚½ƒpƒ‰ƒƒ^
-    @submodels = model_front.submodels     # ƒTƒuƒ‚ƒfƒ‹
+    @params    = model_front.solver_params # å…¥åŠ›ã•ã‚ŒãŸãƒ‘ãƒ©ãƒ¡ã‚¿
+    @submodels = model_front.submodels     # ã‚µãƒ–ãƒ¢ãƒ‡ãƒ«
     
     @acts_params = setParams(@params, @model_front)
     @acts_base = set_base_tests(@params, model_front.base_tests)
   end
   
-  # ACTS‚ÌÀs
+  # ACTSã®å®Ÿè¡Œ
   def solve()
     # param_path = nil
     #Tempfile.open("yact", "./temp") do |fp|
@@ -28,14 +28,15 @@ class YaBackActs
     end
 
     base_tests_path = nil
+    base_fp = nil
     if(@acts_base)
-      Tempfile.open("yact", "./temp") do |fp|
-        fp.puts @acts_base
-        base_tests_path = fp.path
-      end
+      base_fp = Tempfile.open("yact", "./temp")
+      base_fp.puts @acts_base
+      base_fp.flush
+      base_tests_path = base_fp.path
     end
     
-    # ACTS‚ÌƒRƒ}ƒ“ƒhƒtƒ‰ƒO‚Ìİ’è
+    # ACTSã®ã‚³ãƒãƒ³ãƒ‰ãƒ•ãƒ©ã‚°ã®è¨­å®š
     command = "java -Doutput=csv -Drandstar=on -Dchandler=solver"
     if(@command_options[:pair_strength] == 0)
       command += " -Dcombine=all"
@@ -44,10 +45,10 @@ class YaBackActs
     end
     command += " -jar ACTS/acts_cmd_2.92.jar cmd #{param_path} #{result_path}"
     
-    # Às(systemƒRƒ}ƒ“ƒh‚â``‚Å‚ÍAƒ^ƒCƒ€ƒAƒEƒg‚ğE‚¦‚È‚¢‚Ì‚Åpopen‚ÅÀs)
+    # å®Ÿè¡Œ(systemã‚³ãƒãƒ³ãƒ‰ã‚„``ã§ã¯ã€ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆã‚’æ‹¾ãˆãªã„ã®ã§popenã§å®Ÿè¡Œ)
     results = ""
     read_buf = " " * 1024
-    time_limit = @command_options[:timeout] || nil # nil‚Í–³§ŒÀ
+    time_limit = @command_options[:timeout] || nil # nilæ™‚ã¯ç„¡åˆ¶é™
     
     cmd_io = IO.popen(command, "r")
     tool_pid = cmd_io.pid
@@ -58,14 +59,15 @@ class YaBackActs
         raise "time out"
       end
       
-      # ƒuƒƒbƒN‚³‚ê‚È‚¢‚æ‚¤‚Ésysread‚ğ”­sBEOF‚Ìê‡‚Íƒ‹[ƒv‚ğ”²‚¯‚éB
+      # ãƒ–ãƒ­ãƒƒã‚¯ã•ã‚Œãªã„ã‚ˆã†ã«sysreadã‚’ç™ºè¡Œã€‚EOFã®å ´åˆã¯ãƒ«ãƒ¼ãƒ—ã‚’æŠœã‘ã‚‹ã€‚
       result = cmd_io.sysread(1024, read_buf) rescue break
       results += result
     end
     cmd_io.close()
+    base_fp.close! if(@acts_base)
     results = results.kconv(Kconv::UTF8, Kconv::SJIS).split("\n")
     
-    # ƒGƒ‰[‚Ìˆ—
+    # ã‚¨ãƒ©ãƒ¼æ™‚ã®å‡¦ç†
     if( $? != 0 || !results[2..-1])
       error_file = "acts_error.txt"
       File.open(error_file, "w") do |fp|
@@ -74,30 +76,30 @@ class YaBackActs
       raise "ACTS message: #{results}\n\nACTS parameter file is #{error_file}"
     end
     
-    # Œ‹‰Ê‚ğ•Ô‚·BƒRƒƒ“ƒgA‹ós‚Ííœ‚µAÅ‰‚Ì‚Ps‚ÍŠÖŒW‚È‚¢‚Ì‚Å‚Qs–Ú‚©‚çB
+    # çµæœã‚’è¿”ã™ã€‚ã‚³ãƒ¡ãƒ³ãƒˆã€ç©ºè¡Œã¯å‰Šé™¤ã—ã€æœ€åˆã®ï¼‘è¡Œã¯é–¢ä¿‚ãªã„ã®ã§ï¼’è¡Œç›®ã‹ã‚‰ã€‚
     result_text = IO.read(result_path)
     results = result_text.gsub(/^\s*(?:\#.*)?$/, "").split(/\r?\n/).select{|line| line.size() > 0}
     results[1..-1].map{|result| result.gsub("p", "@p").tr(",", "*")}
   end
   
-  # ACTS‚Ìƒpƒ‰ƒƒ^İ’è
+  # ACTSã®ãƒ‘ãƒ©ãƒ¡ã‚¿è¨­å®š
   def setParams(params, model_front)
     acts_params = ""
     restricts = model_front.restricts
     negative_values = model_front.negative_values
     
-    # ƒVƒXƒeƒ€’è‹`‚ÌƒZƒbƒg
+    # ã‚·ã‚¹ãƒ†ãƒ å®šç¾©ã®ã‚»ãƒƒãƒˆ
     acts_params += "[System]\n"
     acts_params += "Name: yact_parameter\n"
     
-    # ƒpƒ‰ƒƒ^’è‹`‚ÌƒZƒbƒg
+    # ãƒ‘ãƒ©ãƒ¡ã‚¿å®šç¾©ã®ã‚»ãƒƒãƒˆ
     acts_params += "[Parameter]\n"
     params.each do | param_name, values |
       acts_params += "#{param_name[1..-1]} (enum) : "
       acts_params += "#{values.map{|value| value[1..-1]}.join(", ")}\n"
     end
     
-    # ƒTƒuƒ‚ƒfƒ‹‚ÌƒZƒbƒg
+    # ã‚µãƒ–ãƒ¢ãƒ‡ãƒ«ã®ã‚»ãƒƒãƒˆ
     acts_params += "[Relation]\n" if(@submodels.size > 0)
     @submodels.each_with_index do | submodel, i |
       params = submodel[:params].keys
@@ -106,7 +108,7 @@ class YaBackActs
       acts_params += "#{submodel[:strength]})\n"
     end
 
-    # §–ñğŒ‚ÌƒZƒbƒg
+    # åˆ¶ç´„æ¡ä»¶ã®ã‚»ãƒƒãƒˆ
     acts_params += "[Constraint]\n" if(restricts.size + negative_values.size> 0)
     restricts.each do | restrict |
       acts_if = convert_restrict(restrict[:if])
@@ -126,7 +128,7 @@ class YaBackActs
       end
     end
     
-    # ƒlƒKƒeƒBƒu’l‚É‚æ‚é§–ñ‚ÌƒZƒbƒg
+    # ãƒã‚¬ãƒ†ã‚£ãƒ–å€¤ã«ã‚ˆã‚‹åˆ¶ç´„ã®ã‚»ãƒƒãƒˆ
     acts_params += "-- Constraints of negative value\n" if(negative_values.size > 0)
     negative_values.each_with_index do | negative_value, i |
       other_values = negative_values[(i+1)..-1]
@@ -145,7 +147,7 @@ class YaBackActs
     new_restrict = restrict.dup
     var_hash = {}
     var_count = 0
-    # Ï˜aŒ`®‚ğRuby‚Ì³‹K•\Œ»‚Å‹­ˆø‚É‰ğÍ
+    # ç©å’Œå½¢å¼ã‚’Rubyã®æ­£è¦è¡¨ç¾ã§å¼·å¼•ã«è§£æ
     var_expr  = "@_\\d+"
     item_expr = "(?:@p\\d+_\\d+|#{var_expr})"
     pare_expr = "\\(#{item_expr}\\)"
@@ -182,7 +184,7 @@ class YaBackActs
           # new_term = "(" + new_term.split("+").join(")||(") + ")"
           # new_term = new_term.split("+").join("||")
         else
-          # ‚»‚Ì‘¼‚Í•ÏŠ·–³‚µ
+          # ãã®ä»–ã¯å¤‰æ›ç„¡ã—
         end
         new_term
       }
@@ -195,17 +197,17 @@ class YaBackActs
     new_restrict
   end
 
-  # ACTS‚Ì•¶–@‚É•ÏŠ·ij
+  # ACTSã®æ–‡æ³•ã«å¤‰æ›ï¼ˆï¼ï¼‰
   def convert_item(item)
     item.split("_")[0][1..-1] + "=" + "\"" + item[1..-1] + "\""
   end
 
-  # ACTS‚Ì•¶–@‚É•ÏŠ·iIj
+  # ACTSã®æ–‡æ³•ã«å¤‰æ›ï¼ˆï¼ï¼ï¼‰
   def convert_false_item(item)
     item.split("_")[0][1..-1] + "!=" + "\"" + item[1..-1] + "\""
   end
 
-  # ƒx[ƒX‚Æ‚È‚éƒeƒXƒg‚Ì“ü—Í
+  # ãƒ™ãƒ¼ã‚¹ã¨ãªã‚‹ãƒ†ã‚¹ãƒˆã®å…¥åŠ›
   def set_base_tests(params, base_tests)
     if(base_tests)
       params.keys.sort.join(",") + "\n" +

@@ -1,22 +1,22 @@
 # encoding: utf-8
 require "pp"
 
-# ZDD‚É‚æ‚é§–ñƒ\ƒ‹ƒo‚ÌƒNƒ‰ƒX
+# ZDDã«ã‚ˆã‚‹åˆ¶ç´„ã‚½ãƒ«ãƒã®ã‚¯ãƒ©ã‚¹
 class YaBackZdd
   require "nysol/zdd"
   
-  # ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+  # ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
   def initialize(params, model_front)
-    @zdd_params = {}    # ZDD‚ÅŠÇ—‚·‚éƒpƒ‰ƒƒ^
+    @zdd_params = {}    # ZDDã§ç®¡ç†ã™ã‚‹ãƒ‘ãƒ©ãƒ¡ã‚¿
     @command_options = params.options
     @model_front = model_front
-    @params    = model_front.solver_params # “ü—Í‚³‚ê‚½ƒpƒ‰ƒƒ^
-    @submodels = model_front.submodels     # ƒTƒuƒ‚ƒfƒ‹
+    @params    = model_front.solver_params # å…¥åŠ›ã•ã‚ŒãŸãƒ‘ãƒ©ãƒ¡ã‚¿
+    @submodels = model_front.submodels     # ã‚µãƒ–ãƒ¢ãƒ‡ãƒ«
     
     setZddParams(@params, @model_front)
   end
   
-  # ƒƒCƒ“ƒ‹[ƒ`ƒ“Bw’è‚³‚ê‚½ğŒ‚ÅƒeƒXƒg‚ğ¶¬‚·‚é
+  # ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒãƒ³ã€‚æŒ‡å®šã•ã‚ŒãŸæ¡ä»¶ã§ãƒ†ã‚¹ãƒˆã‚’ç”Ÿæˆã™ã‚‹
   def solve()
     strength = @command_options[:pair_strength] || 2
 
@@ -26,7 +26,7 @@ class YaBackZdd
     end
     test_set = @zdd_params[:current_tests]
     
-    # Pairwise‚Åi‚è‚Ş‚©”Û‚©
+    # Pairwiseã§çµã‚Šè¾¼ã‚€ã‹å¦ã‹
     if(strength > 0)
       # test_set = pairwise_foo(test_set, strength)
       # test_set = pairwise(test_set, strength)
@@ -36,11 +36,11 @@ class YaBackZdd
       end
     end
     
-    # Œ‹‰Ê‚Ìƒwƒbƒ_‚ğ•\¦
+    # çµæœã®ãƒ˜ãƒƒãƒ€ã‚’è¡¨ç¤º
     @model_front.write_header()
     
-    # –c‘å‚ÈƒeƒXƒg€–Ú‚É‚È‚Á‚½‚Æ‚«‚É‘Ò‚½‚¹‚È‚¢‚æ‚¤‚ÉZDD‘¤‚Ì
-    # each‚Åˆê€–Ú‚¸‚Âo—Í‚·‚é
+    # è†¨å¤§ãªãƒ†ã‚¹ãƒˆé …ç›®ã«ãªã£ãŸã¨ãã«å¾…ãŸã›ãªã„ã‚ˆã†ã«ZDDå´ã®
+    # eachã§ä¸€é …ç›®ãšã¤å‡ºåŠ›ã™ã‚‹
     @zdd_params[:base_tests].each do | a_test |
       @model_front.write_result(a_test.to_s)
     end
@@ -50,13 +50,13 @@ class YaBackZdd
     end
   end
 
-  # ZDD‚Ìƒpƒ‰ƒƒ^İ’è
+  # ZDDã®ãƒ‘ãƒ©ãƒ¡ã‚¿è¨­å®š
   def setZddParams(params, model_front)
     restricts = model_front.restricts
     negative_values = model_front.negative_values
     base_tests = model_front.base_tests
     
-    # ƒpƒ‰ƒƒ^’è‹`‚ÌƒZƒbƒg
+    # ãƒ‘ãƒ©ãƒ¡ã‚¿å®šç¾©ã®ã‚»ãƒƒãƒˆ
     test_set  = ZDD.constant(1)
     params.each do | param_name, values |
       @zdd_params[param_name]  = ZDD.constant(0)
@@ -71,7 +71,7 @@ class YaBackZdd
     
     old_count = test_set.count
     
-    # §–ñğŒ‚ÌƒZƒbƒg
+    # åˆ¶ç´„æ¡ä»¶ã®ã‚»ãƒƒãƒˆ
     @zdd_params[:restrict] = restricts.map { | restrict |
       results = {}
       restrict.each do | key, value |
@@ -79,25 +79,25 @@ class YaBackZdd
       end
       results
     }
-    # –¾¦“I‚Éw’è‚³‚ê‚½§–ñğŒ‚É]‚Á‚Ä€–Ú‚ğíŒ¸
+    # æ˜ç¤ºçš„ã«æŒ‡å®šã•ã‚ŒãŸåˆ¶ç´„æ¡ä»¶ã«å¾“ã£ã¦é …ç›®ã‚’å‰Šæ¸›
     test_set = apply_restrict(test_set)
     
-    # ƒlƒKƒeƒBƒu’l‚É‚æ‚é§–ñ‚É]‚Á‚Ä€–Ú‚ğíŒ¸
+    # ãƒã‚¬ãƒ†ã‚£ãƒ–å€¤ã«ã‚ˆã‚‹åˆ¶ç´„ã«å¾“ã£ã¦é …ç›®ã‚’å‰Šæ¸›
     test_set = negative_constraint(test_set, negative_values)
 
     puts "count #{old_count} --> #{test_set.count}"
     
-    # §–ñğŒ‚ğ–‚½‚·‚·‚×‚Ä‚ÌƒeƒXƒg€–Ú
+    # åˆ¶ç´„æ¡ä»¶ã‚’æº€ãŸã™ã™ã¹ã¦ã®ãƒ†ã‚¹ãƒˆé …ç›®
     @zdd_params[:whole_tests] = test_set
     
-    # ƒV[ƒh‚Æ‚µ‚Ä—^‚¦‚ç‚ê‚½Šî–{“I‚ÈƒeƒXƒg
+    # ã‚·ãƒ¼ãƒ‰ã¨ã—ã¦ä¸ãˆã‚‰ã‚ŒãŸåŸºæœ¬çš„ãªãƒ†ã‚¹ãƒˆ
     @zdd_params[:base_tests] = set_base_tests(test_set, base_tests)
     
-    # V‚½‚Éì¬‚ÈƒeƒXƒg‚Ì‘S‘Ì
+    # æ–°ãŸã«ä½œæˆãªãƒ†ã‚¹ãƒˆã®å…¨ä½“
     @zdd_params[:current_tests] = @zdd_params[:whole_tests] - @zdd_params[:base_tests]
   end
 
-  # §–ñğŒ‚É]‚¢AƒeƒXƒg€–Ú‚ğíŒ¸
+  # åˆ¶ç´„æ¡ä»¶ã«å¾“ã„ã€ãƒ†ã‚¹ãƒˆé …ç›®ã‚’å‰Šæ¸›
   def apply_restrict(test)
     @zdd_params[:restrict].each do | restrict |
       if(restrict[:if] && restrict[:else])
@@ -113,7 +113,7 @@ class YaBackZdd
     test
   end
 
-  # §–ñğŒ‚É]‚¢AƒeƒXƒg€–Ú‚ğíŒ¸
+  # åˆ¶ç´„æ¡ä»¶ã«å¾“ã„ã€ãƒ†ã‚¹ãƒˆé …ç›®ã‚’å‰Šæ¸›
   def apply_restrict2(test)
     @zdd_params[:restrict].each do | restrict |
       if(restrict[:if] && restrict[:else])
@@ -129,7 +129,7 @@ class YaBackZdd
     test
   end
 
-  # ƒlƒKƒeƒBƒu’l‚É‚æ‚é§–ñ‚É]‚Á‚Ä€–Ú‚ğíŒ¸(ˆ—•û–@‚ÌH•v‚ª•K—vj
+  # ãƒã‚¬ãƒ†ã‚£ãƒ–å€¤ã«ã‚ˆã‚‹åˆ¶ç´„ã«å¾“ã£ã¦é …ç›®ã‚’å‰Šæ¸›(å‡¦ç†æ–¹æ³•ã®å·¥å¤«ãŒå¿…è¦ï¼‰
   def negative_constraint(test_set, negative_values)
     if(negative_values.size() > 0)
       negative_condition = ZDD.constant(0)
@@ -137,11 +137,11 @@ class YaBackZdd
         negative_condition += ZDD.itemset(negative_value)
       end
       
-      # ƒlƒKƒeƒBƒu’l‚ªd‚È‚Á‚Ä‚¢‚éƒeƒXƒg€–Ú‚ğíŒ¸
+      # ãƒã‚¬ãƒ†ã‚£ãƒ–å€¤ãŒé‡ãªã£ã¦ã„ã‚‹ãƒ†ã‚¹ãƒˆé …ç›®ã‚’å‰Šæ¸›
       test_set -= test_set.restrict((negative_condition * negative_condition)/2)
       
       #pp test_set
-      # ŒÃ‚¢˜_—B‚±‚ê‚æ‚è‚Íã‹L‚Ìˆ—‚Ì‚Ù‚¤‚ªƒxƒ^[‚¾‚Æv‚¤‚ª...
+      # å¤ã„è«–ç†ã€‚ã“ã‚Œã‚ˆã‚Šã¯ä¸Šè¨˜ã®å‡¦ç†ã®ã»ã†ãŒãƒ™ã‚¿ãƒ¼ã ã¨æ€ã†ãŒ...
       # negative_condition = ZDD.constant(1)
       # negative_values.each do | negative_value |
       #   negative_condition += ZDD.itemset(negative_value)
@@ -153,11 +153,11 @@ class YaBackZdd
     test_set
   end
 
-  # ƒV[ƒh‚Æ‚µ‚Ä—^‚¦‚éŠî–{“I‚ÈƒeƒXƒg‚ğZDD‚Ìƒ‚ƒWƒ…[ƒ‹‚É•ÏŠ·
+  # ã‚·ãƒ¼ãƒ‰ã¨ã—ã¦ä¸ãˆã‚‹åŸºæœ¬çš„ãªãƒ†ã‚¹ãƒˆã‚’ZDDã®ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã«å¤‰æ›
   def set_base_tests(test_set, base_tests)
     zdd_base_tests = ZDD.constant(0)
     if(base_tests)
-      # ZDDŒ`®‚É•ÏŠ·‚µA‘SƒeƒXƒg‚ÌƒTƒuW‡‚Å‚ ‚é‚±‚Æ‚ğŠm”F
+      # ZDDå½¢å¼ã«å¤‰æ›ã—ã€å…¨ãƒ†ã‚¹ãƒˆã®ã‚µãƒ–é›†åˆã§ã‚ã‚‹ã“ã¨ã‚’ç¢ºèª
       zdd_base_tests = eval(base_tests)
       diff = (test_set - zdd_base_tests) < 0
       if(diff.count > 0)
@@ -167,12 +167,12 @@ class YaBackZdd
     zdd_base_tests
   end
   
-  # Å‰‚Ì€‚ğ•Ô‚·
+  # æœ€åˆã®é …ã‚’è¿”ã™
   def first_term(terms)
     terms.each {|term| return term}
   end
 
-  # ƒ‰ƒ“ƒ_ƒ€‚È€‚ğ•Ô‚·
+  # ãƒ©ãƒ³ãƒ€ãƒ ãªé …ã‚’è¿”ã™
   def random_term(terms)
     offset = rand(terms.count)
     count = 0
@@ -183,7 +183,7 @@ class YaBackZdd
     raise "internal error"
   end
 
-  # ƒI[ƒ‹ƒyƒA‚Ì‰¼À‘•
+  # ã‚ªãƒ¼ãƒ«ãƒšã‚¢ã®ä»®å®Ÿè£…
   def pairwise_foo(test, strength = 2)
 
     results = ZDD.constant(0)
@@ -195,7 +195,7 @@ class YaBackZdd
     while(true)
       print "all_combination: "
       pp all_combinations
-      # Œ»ó‚Ì‘g‚İ‡‚í‚¹‚©‚çƒeƒXƒg€–Ú‚ğ‘g‚İ—§‚Ä
+      # ç¾çŠ¶ã®çµ„ã¿åˆã‚ã›ã‹ã‚‰ãƒ†ã‚¹ãƒˆé …ç›®ã‚’çµ„ã¿ç«‹ã¦
       result = ZDD.constant(1)
       all_combinations.shuffle.each do | temp_combi |
         next if(temp_combi.count() == 0)
@@ -203,22 +203,22 @@ class YaBackZdd
         result *= temp_combi
         result = result.permitsym(max_size)
         puts result.count
-        # “r’†‚Å–‚½‚·‚à‚Ì‚ª–³‚­‚È‚Á‚½ê‡‚ÍÅŒã‚ÌŒ‹‰Ê‚ğg‚¤
+        # é€”ä¸­ã§æº€ãŸã™ã‚‚ã®ãŒç„¡ããªã£ãŸå ´åˆã¯æœ€å¾Œã®çµæœã‚’ä½¿ã†
         if(result.count == 0)
           result = last_result
           break
         end
       end
-      result = (result == result)  # ŒW”‚Ìíœ
+      result = (result == result)  # ä¿‚æ•°ã®å‰Šé™¤
       result = result.maxcover()
-      # ‘g‚İ—§‚Ä‚½‚à‚Ì‚Ì‚¤‚¿A§–ñğŒ‚ğ–‚½‚µ‚Ä‚¢‚é‚à‚Ì‚ğ‘I‘ğ
+      # çµ„ã¿ç«‹ã¦ãŸã‚‚ã®ã®ã†ã¡ã€åˆ¶ç´„æ¡ä»¶ã‚’æº€ãŸã—ã¦ã„ã‚‹ã‚‚ã®ã‚’é¸æŠ
       # result = (result == @zdd_params[:current_tests])
       result = result.meet(@zdd_params[:current_tests])
       puts "match count = #{result.count}"
       
       puts "result=" + result.inspect
       
-      # Œ‹‰Ê‚Ì’†‚©‚ç‘f‚Ì‘g‡‚¹‚ğ—ñ‹“@Ë@–v
+      # çµæœã®ä¸­ã‹ã‚‰ç´ ã®çµ„åˆã›ã‚’åˆ—æŒ™ã€€â‡’ã€€æ²¡
       # prime = result.delta(result)
       #new_result = ZDD.constant(0)
       #while(result.size() > 0)
@@ -238,7 +238,7 @@ class YaBackZdd
       end
       results += new_result
       
-      # V‚µ‚­‚Å‚«‚½Œ‹‰Ê‚©‚ç‘g‡‚¹‚ğíœ
+      # æ–°ã—ãã§ããŸçµæœã‹ã‚‰çµ„åˆã›ã‚’å‰Šé™¤
       count = 0
       all_combinations = all_combinations.map do | temp_combi |
         combi = temp_combi.meet(new_result)
@@ -277,7 +277,7 @@ class YaBackZdd
     calc_all_pairs(all_combi, test_array, strength, test_case_num)
   end
 
-  # ƒI[ƒ‹ƒyƒA‚Ì‰¼À‘•
+  # ã‚ªãƒ¼ãƒ«ãƒšã‚¢ã®ä»®å®Ÿè£…
   def pairwise(test_set, strength = 2)
 
     all_combi = get_all_combination(@params, strength)
@@ -287,13 +287,13 @@ class YaBackZdd
     calc_all_pairs_sample(all_combi, test_set, strength, test_case_num)
   end
 
-  # ƒI[ƒ‹ƒyƒA‚Ì‰¼À‘•
+  # ã‚ªãƒ¼ãƒ«ãƒšã‚¢ã®ä»®å®Ÿè£…
   def pairwise_new(test_set, strength = 2)
 
-    # ‘S‘Ì‚Ì‘g‡‚¹‚ğ“¾‚é
+    # å…¨ä½“ã®çµ„åˆã›ã‚’å¾—ã‚‹
     all_combi = get_all_combination(@params, strength)
     
-    # ƒTƒuƒ‚ƒfƒ‹‚Ì‘g‡‚¹‚ğ“¾‚é
+    # ã‚µãƒ–ãƒ¢ãƒ‡ãƒ«ã®çµ„åˆã›ã‚’å¾—ã‚‹
     @submodels.each do | submodel |
       pp submodel
       if(submodel[:strength] > strength)
@@ -301,7 +301,7 @@ class YaBackZdd
       end
     end
     
-    # Še€‚Ì‚¤‚¿A•ïŠÜ‚µ‚Ä‚¢‚é‚à‚Ì‚ğíœiˆ—•û–@‚ÌÄŒŸ“¢—vj
+    # å„é …ã®ã†ã¡ã€åŒ…å«ã—ã¦ã„ã‚‹ã‚‚ã®ã‚’å‰Šé™¤ï¼ˆå‡¦ç†æ–¹æ³•ã®å†æ¤œè¨è¦ï¼‰
     pp all_combi.count
     work = all_combi.freqpatC(2)
     work -= work.permitsym(strength - 1)
@@ -311,12 +311,12 @@ class YaBackZdd
     pp all_combi
     puts "***"
     
-    # §–ñ€–Ú‚É”½‚µ‚Ä‚¢‚é‚à‚Ì‚Ìíœ‚µ‚æ‚¤‚Æv‚Á‚½‚ªAŠù‘¶ˆ—‚Å‚Íƒ_ƒ‚¾‚Á‚½
-    # §–ñ€–Ú‚Æ‚ÍŠÖŒW‚È‚¢€‚Ü‚Åíœ‚³‚ê‚Ä‚µ‚Ü‚¤B
+    # åˆ¶ç´„é …ç›®ã«åã—ã¦ã„ã‚‹ã‚‚ã®ã®å‰Šé™¤ã—ã‚ˆã†ã¨æ€ã£ãŸãŒã€æ—¢å­˜å‡¦ç†ã§ã¯ãƒ€ãƒ¡ã ã£ãŸ
+    # åˆ¶ç´„é …ç›®ã¨ã¯é–¢ä¿‚ãªã„é …ã¾ã§å‰Šé™¤ã•ã‚Œã¦ã—ã¾ã†ã€‚
     # all_combi = apply_restrict2(all_combi)
     # pp all_combi
     # exit
-    # «”\“I‚É–â‘è‚Èˆ—‚¾‚ªA‚¢‚Ü‚Ì‚Æ‚±‚ë‚±‚ÌƒAƒ‹ƒSƒŠƒYƒ€
+    # æ€§èƒ½çš„ã«å•é¡Œãªå‡¦ç†ã ãŒã€ã„ã¾ã®ã¨ã“ã‚ã“ã®ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ 
     invalid_combi = ZDD.constant(0)
     all_combi.each do | term |
       if((test_set/term).count == 0)
@@ -329,7 +329,7 @@ class YaBackZdd
     calc_all_pairs_sample(all_combi, test_set, strength, test_case_num)
   end
 
-  # ‚ ‚é‹­“x‚Å‚Ì‚·‚×‚Ä‚Ì‘g‡‚¹‚ğ“¾‚é(ruby‚Ìcombination‚ğg‚Á‚½À‘•j
+  # ã‚ã‚‹å¼·åº¦ã§ã®ã™ã¹ã¦ã®çµ„åˆã›ã‚’å¾—ã‚‹(rubyã®combinationã‚’ä½¿ã£ãŸå®Ÿè£…ï¼‰
   def get_all_combi(strength)
     all_combi = ZDD.constant(0)
     all_combinations = []
@@ -345,19 +345,19 @@ class YaBackZdd
     all_combinations
   end
     
-  # ‚ ‚é‹­“x‚Å‚Ì‚·‚×‚Ä‚Ì‘g‡‚¹‚ğ“¾‚é(zdd‘¤‚Ìƒ‰ƒCƒuƒ‰ƒŠ‚ğg‚Á‚½À‘•j
+  # ã‚ã‚‹å¼·åº¦ã§ã®ã™ã¹ã¦ã®çµ„åˆã›ã‚’å¾—ã‚‹(zddå´ã®ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’ä½¿ã£ãŸå®Ÿè£…ï¼‰
   def get_all_combination(params, strength)
     test_combi = ZDD.constant(1)
     params.each do | param_name, values |
       test_combi *= (@zdd_params[param_name] + 1)
     end
-    # ‚ ‚é‹­“x‚Å‚Ì‚·‚×‚Ä‚Ì‘g‡‚¹
+    # ã‚ã‚‹å¼·åº¦ã§ã®ã™ã¹ã¦ã®çµ„åˆã›
     all_combi = test_combi.permitsym(strength) - test_combi.permitsym(strength-1)
     puts "combi count = #{all_combi.count}"
     all_combi
   end
     
-  # ƒeƒXƒg‚ğ”z—ñ‚É•ÏŠ·i‚±‚ê‚Í‘å‚«‚¢‚Æ‚«‚É”j‚½‚ñ‚·‚éˆ—j
+  # ãƒ†ã‚¹ãƒˆã‚’é…åˆ—ã«å¤‰æ›ï¼ˆã“ã‚Œã¯å¤§ãã„ã¨ãã«ç ´ãŸã‚“ã™ã‚‹å‡¦ç†ï¼‰
   def get_test_array(test_set)
     test_array = []
     test_set.each do | a_test |
@@ -366,7 +366,7 @@ class YaBackZdd
     test_array
   end
     
-  # ‘g‚İ‡‚í‚¹‚ğ”z—ñ‚É•ÏŠ·i‚±‚ê‚Í‘å‚«‚¢‚Æ‚«‚É”j‚½‚ñ‚·‚éˆ—j
+  # çµ„ã¿åˆã‚ã›ã‚’é…åˆ—ã«å¤‰æ›ï¼ˆã“ã‚Œã¯å¤§ãã„ã¨ãã«ç ´ãŸã‚“ã™ã‚‹å‡¦ç†ï¼‰
   def get_combi_array(all_combi)
     combi_array = []
     all_combi.each do | combi |
@@ -375,7 +375,7 @@ class YaBackZdd
     combi_array
   end
     
-  # íœ‚·‚éŒó•â‚ğ“¾‚é
+  # å‰Šé™¤ã™ã‚‹å€™è£œã‚’å¾—ã‚‹
   def get_remove_new(sample, all_combi, strength)
     puts "****"
     min_match = 9999999999
@@ -393,7 +393,7 @@ class YaBackZdd
     remove
   end
     
-  # íœ‚·‚éŒó•â‚ğ“¾‚é
+  # å‰Šé™¤ã™ã‚‹å€™è£œã‚’å¾—ã‚‹
   def get_remove(sample, all_combi, dup_combi, strength)
     puts "****"
     min_match = 9999999999
@@ -414,7 +414,7 @@ class YaBackZdd
     remove
   end
     
-  # íœ‚·‚éŒó•â‚ğ“¾‚é
+  # å‰Šé™¤ã™ã‚‹å€™è£œã‚’å¾—ã‚‹
   def get_remove_old(sample, strength)
     freq_count = 2
     remove = ZDD.constant(0)
@@ -433,18 +433,18 @@ class YaBackZdd
     random_term(remove)
   end
     
-  # ƒJƒo[‚Å‚«‚Ä‚¢‚È‚¢‘g‡‚¹‚ğ“¾‚é
+  # ã‚«ãƒãƒ¼ã§ãã¦ã„ãªã„çµ„åˆã›ã‚’å¾—ã‚‹
   def check_cover(all_combi, sample, strength)
-    # •p“x‚àŠÜ‚ß‚½oŒ»‘g‚İ‡‚í‚¹
+    # é »åº¦ã‚‚å«ã‚ãŸå‡ºç¾çµ„ã¿åˆã‚ã›
     combi = all_combi.meet(sample)
     combi -= combi.permitsym(strength-1)
-    # d•¡‚µ‚Ä‚¢‚é‘g‡‚¹
+    # é‡è¤‡ã—ã¦ã„ã‚‹çµ„åˆã›
     dup_combi = combi.termsGE(2)
     dup_combi = (dup_combi == dup_combi)
     dup_combi = (all_combi == dup_combi)
-    # d‚İ‚Ìíœ
+    # é‡ã¿ã®å‰Šé™¤
     flat_combi = (combi == combi)
-    # ƒJƒo[‚³‚ê‚Ä‚¢‚È‚¢‘g‚İ‡‚í‚¹
+    # ã‚«ãƒãƒ¼ã•ã‚Œã¦ã„ãªã„çµ„ã¿åˆã‚ã›
     #puts "***"
     #pp flat_combi
     no_combi = ((all_combi - flat_combi) > 0)
@@ -459,7 +459,7 @@ class YaBackZdd
     [no_combi, dup_combi]
   end
     
-  # ‚·‚×‚Ä‚ÌƒyƒA‚ğ—ñ‹“
+  # ã™ã¹ã¦ã®ãƒšã‚¢ã‚’åˆ—æŒ™
   def calc_all_pairs_sample(all_combi, test_set, strength, test_case_num)
     test_array = get_test_array(test_set)
     try_count = 0
@@ -471,7 +471,7 @@ class YaBackZdd
     dup_combi = nil
     sample = nil
     100.times do | try_count |
-      # ƒTƒ“ƒvƒ‹‚Ìƒf[ƒ^
+      # ã‚µãƒ³ãƒ—ãƒ«ã®ãƒ‡ãƒ¼ã‚¿
       test_array.shuffle!
       current_sample = test_array[0...test_case_num].inject(:+)
       (no_combi, dup_combi) = check_cover(all_combi, current_sample, strength)
@@ -580,24 +580,24 @@ class YaBackZdd
     zdd_params
   end
 
-  # ‚·‚×‚Ä‚ÌƒyƒA‚ğ—ñ‹“
+  # ã™ã¹ã¦ã®ãƒšã‚¢ã‚’åˆ—æŒ™
   def calc_all_pairs_all(all_combi, test_array, strength, test_case_num)
     try_count = 0
     puts test_array.size()
     puts test_array.combination(100).size()
     test_array.combination(100).each do | current_array |
-      # ƒTƒ“ƒvƒ‹‚Ìƒf[ƒ^
+      # ã‚µãƒ³ãƒ—ãƒ«ã®ãƒ‡ãƒ¼ã‚¿
       sample = current_array.inject(:+)
       
-      # •p“x‚àŠÜ‚ß‚½oŒ»‘g‚İ‡‚í‚¹
+      # é »åº¦ã‚‚å«ã‚ãŸå‡ºç¾çµ„ã¿åˆã‚ã›
       combi = all_combi.meet(sample)
       combi -= combi.permitsym(strength-1)
       # combi.show
       
-      # d‚İ‚Ìíœ
+      # é‡ã¿ã®å‰Šé™¤
       flat_combi = (combi == combi)
       
-      # ƒJƒo[‚³‚ê‚Ä‚¢‚È‚¢‘g‚İ‡‚í‚¹
+      # ã‚«ãƒãƒ¼ã•ã‚Œã¦ã„ãªã„çµ„ã¿åˆã‚ã›
       no_combi = (all_combi - flat_combi)
       
       # pp combi.to_a.sort
@@ -613,7 +613,7 @@ class YaBackZdd
   end
 end
 
-# ƒfƒoƒbƒOƒvƒŠƒ“ƒg
+# ãƒ‡ãƒãƒƒã‚°ãƒ—ãƒªãƒ³ãƒˆ
 def dbgpp(variable, title = nil)
   if($debug)
     puts "===#{title}===" if title
@@ -625,7 +625,7 @@ def dbgpp(variable, title = nil)
   end
 end
 
-# ƒvƒƒtƒ@ƒCƒ‰‚ğ—LŒø‚É‚·‚é‚½‚ß‚Ì‚¨‚Ü‚¶‚È‚¢
+# ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ©ã‚’æœ‰åŠ¹ã«ã™ã‚‹ãŸã‚ã®ãŠã¾ã˜ãªã„
 module ZDD
   #def self.to_s
   #  self.name

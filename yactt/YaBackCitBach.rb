@@ -3,40 +3,40 @@ require "pp"
 require "tempfile"
 require "kconv"
 
-# CIT-BACH‚É‚æ‚éƒoƒbƒNƒGƒ“ƒhˆ—
+# CIT-BACHã«ã‚ˆã‚‹ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰å‡¦ç†
 class YaBackCitBach
   
-  # ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+  # ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
   def initialize(params, model_front)
     @command_options = params.options
     @model_front = model_front
-    @params    = model_front.solver_params # “ü—Í‚³‚ê‚½ƒpƒ‰ƒƒ^
-    @submodels = model_front.submodels     # ƒTƒuƒ‚ƒfƒ‹
+    @params    = model_front.solver_params # å…¥åŠ›ã•ã‚ŒãŸãƒ‘ãƒ©ãƒ¡ã‚¿
+    @submodels = model_front.submodels     # ã‚µãƒ–ãƒ¢ãƒ‡ãƒ«
     
     @cit_params = setParams(@params, @model_front)
     @cit_base = set_base_tests(@params, model_front.base_tests)
   end
   
-  # CIT-BACH‚ÌÀs
+  # CIT-BACHã®å®Ÿè¡Œ
   def solve()
-    param_path = nil
-    Tempfile.open("yact", "./temp") do |fp|
-      fp.puts @cit_params
-      param_path = fp.path
-    end
+    param_fp = Tempfile.open("yact", "./temp")
+    param_fp.puts @cit_params
+    param_fp.flush
+    param_path = param_fp.path
 
     base_tests_path = nil
+    base_fp = nil
     if(@cit_base)
-      Tempfile.open("yact", "./temp") do |fp|
-        fp.puts @cit_base
-        base_tests_path = fp.path
-      end
+      base_fp = Tempfile.open("yact", "./temp")
+      base_fp.puts @cit_base
+      base_fp.flush
+      base_tests_path = base_fp.path
     end
     
-    # citƒfƒBƒŒƒNƒgƒŠ‚É‚ ‚éjar‚ğ’Tõiƒo[ƒWƒ‡ƒ“”Ô†‚ª‘å‚«‚¢‚à‚Ì‚ğ‘I‘ğj
+    # citãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«ã‚ã‚‹jarã‚’æ¢ç´¢ï¼ˆãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·ãŒå¤§ãã„ã‚‚ã®ã‚’é¸æŠï¼‰
     cit_jar = Dir.glob("cit/cit-bach*.jar").sort[-1]
     
-    # CIT‚ÌƒRƒ}ƒ“ƒhƒtƒ‰ƒO‚Ìİ’è
+    # CITã®ã‚³ãƒãƒ³ãƒ‰ãƒ•ãƒ©ã‚°ã®è¨­å®š
     command = "java -jar #{cit_jar} -i #{param_path}"
     command += " -s #{base_tests_path}" if(@cit_base)
     command += " -random #{@command_options[:random_seed]}" if(@command_options[:random_seed])
@@ -47,10 +47,10 @@ class YaBackCitBach
     end
     # puts command
 
-    # Às(systemƒRƒ}ƒ“ƒh‚â``‚Å‚ÍAƒ^ƒCƒ€ƒAƒEƒg‚ğE‚¦‚È‚¢‚Ì‚Åpopen‚ÅÀs)
+    # å®Ÿè¡Œ(systemã‚³ãƒãƒ³ãƒ‰ã‚„``ã§ã¯ã€ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆã‚’æ‹¾ãˆãªã„ã®ã§popenã§å®Ÿè¡Œ)
     results = ""
     read_buf = " " * 1024
-    time_limit = @command_options[:timeout] || nil # nil‚Í–³§ŒÀ
+    time_limit = @command_options[:timeout] || nil # nilæ™‚ã¯ç„¡åˆ¶é™
     
     cmd_io = IO.popen(command, "r")
     tool_pid = cmd_io.pid
@@ -61,14 +61,16 @@ class YaBackCitBach
         raise "time out"
       end
       
-      # ƒuƒƒbƒN‚³‚ê‚È‚¢‚æ‚¤‚Ésysread‚ğ”­sBEOF‚Ìê‡‚Íƒ‹[ƒv‚ğ”²‚¯‚éB
+      # ãƒ–ãƒ­ãƒƒã‚¯ã•ã‚Œãªã„ã‚ˆã†ã«sysreadã‚’ç™ºè¡Œã€‚EOFã®å ´åˆã¯ãƒ«ãƒ¼ãƒ—ã‚’æŠœã‘ã‚‹ã€‚
       result = cmd_io.sysread(1024, read_buf) rescue break
       results += result
     end
     cmd_io.close()
+    param_fp.close!
+    base_fp.close! if(@cit_base)
     results = results.kconv(Kconv::UTF8, Kconv::SJIS).split("\n")
 
-    # ƒGƒ‰[‚Ìˆ—
+    # ã‚¨ãƒ©ãƒ¼æ™‚ã®å‡¦ç†
     if(!results[0].match(/^#SUCCESS,/))
       error_file = "cit_error.txt"
       File.open(error_file, "w") do |fp|
@@ -77,23 +79,23 @@ class YaBackCitBach
       raise "CIT-BACH message: #{results[0]}\nCIT-BACH parameter file is #{error_file}"
     end
     
-    # Œ‹‰Ê‚ğ•Ô‚·BÅ‰‚Ì“ñs‚ÍŠÖŒW‚È‚¢‚Ì‚Å‚Rs–Ú‚©‚çB
+    # çµæœã‚’è¿”ã™ã€‚æœ€åˆã®äºŒè¡Œã¯é–¢ä¿‚ãªã„ã®ã§ï¼“è¡Œç›®ã‹ã‚‰ã€‚
     results[2..-1].map{|result| result.tr(",", "*")}
   end
   
-  # CitBach‚Ìƒpƒ‰ƒƒ^İ’è
+  # CitBachã®ãƒ‘ãƒ©ãƒ¡ã‚¿è¨­å®š
   def setParams(params, model_front)
     cit_params = ""
     restricts = model_front.restricts
     negative_values = model_front.negative_values
     
-    # ƒpƒ‰ƒƒ^’è‹`‚ÌƒZƒbƒg
+    # ãƒ‘ãƒ©ãƒ¡ã‚¿å®šç¾©ã®ã‚»ãƒƒãƒˆ
     cit_params += "# Parameters\n"
     params.each do | param_name, values |
       cit_params += "#{param_name} (#{values.join(" ")})\n"
     end
     
-    # ƒTƒuƒ‚ƒfƒ‹‚ÌƒZƒbƒg
+    # ã‚µãƒ–ãƒ¢ãƒ‡ãƒ«ã®ã‚»ãƒƒãƒˆ
     cit_params += "# Submodels\n" if(@submodels.size > 0)
     @submodels.each do | submodel |
       params = submodel[:params].keys
@@ -101,7 +103,7 @@ class YaBackCitBach
       warn "yact: submodel strength is unmatch" if(params.size != submodel[:strength])
     end
 
-    # §–ñğŒ‚ÌƒZƒbƒg
+    # åˆ¶ç´„æ¡ä»¶ã®ã‚»ãƒƒãƒˆ
     cit_params += "# Written constraints\n" if(restricts.size > 0)
     restricts.each do | restrict |
       cit_if = convert_restrict(restrict[:if])
@@ -119,7 +121,7 @@ class YaBackCitBach
       end
     end
     
-    # ƒlƒKƒeƒBƒu’l‚É‚æ‚é§–ñ‚ÌƒZƒbƒg
+    # ãƒã‚¬ãƒ†ã‚£ãƒ–å€¤ã«ã‚ˆã‚‹åˆ¶ç´„ã®ã‚»ãƒƒãƒˆ
     cit_params += "# Constraints of negative value\n" if(negative_values.size > 0)
     negative_values.each_with_index do | negative_value, i |
       other_values = negative_values[(i+1)..-1]
@@ -137,13 +139,13 @@ class YaBackCitBach
     cit_params
   end
 
-  # §–ñğŒ•”•ª‚Ì•ÏŠ·
+  # åˆ¶ç´„æ¡ä»¶éƒ¨åˆ†ã®å¤‰æ›
   def convert_restrict(restrict)
     return nil unless(restrict)
     new_restrict = restrict.dup
     var_hash = {}
     var_count = 0
-    # Ï˜aŒ`®‚ğRuby‚Ì³‹K•\Œ»‚Å‹­ˆø‚É‰ğÍ
+    # ç©å’Œå½¢å¼ã‚’Rubyã®æ­£è¦è¡¨ç¾ã§å¼·å¼•ã«è§£æ
     var_expr  = "@_\\d+"
     item_expr = "(?:@p\\d+_\\d+|#{var_expr})"
     pare_expr = "\\(#{item_expr}\\)"
@@ -176,7 +178,7 @@ class YaBackCitBach
         when /^#{sum_expr}$/
           new_term = "(or " + new_term.split("+").join(" ") + ")"
         else
-          # ‚»‚Ì‘¼‚Í•ÏŠ·–³‚µ
+          # ãã®ä»–ã¯å¤‰æ›ç„¡ã—
         end
         new_term
       }
@@ -189,17 +191,17 @@ class YaBackCitBach
     new_restrict
   end
 
-  # CIT‚Ì•¶–@‚É•ÏŠ·ij
+  # CITã®æ–‡æ³•ã«å¤‰æ›ï¼ˆï¼ï¼ï¼‰
   def convert_item(item)
     "(== [" + item.split("_")[0] + "] " + item + ")"
   end
 
-  # CIT‚Ì•¶–@‚É•ÏŠ·iƒ„j
+  # CITã®æ–‡æ³•ã«å¤‰æ›ï¼ˆï¼œï¼ï¼‰
   def convert_false_item(item)
     "(<> [" + item.split("_")[0] + "] " + item + ")"
   end
 
-  # ƒx[ƒX‚Æ‚È‚éƒeƒXƒg‚Ì“ü—Í
+  # ãƒ™ãƒ¼ã‚¹ã¨ãªã‚‹ãƒ†ã‚¹ãƒˆã®å…¥åŠ›
   def set_base_tests(params, base_tests)
     if(base_tests)
       params.keys.sort.join(",") + "\n" +

@@ -1,70 +1,69 @@
 # encoding: utf-8
 
-# ”Ä—p“I‚È‘g‡‚¹ƒeƒXƒg€–Ú¶¬ƒc[ƒ‹
-#   ruby yact.rb modelfile  # PICT‚Åw’è‚·‚éƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ğw’è
-#   ruby yact.rb --help     # ‚»‚Ì‘¼‚ÌƒIƒvƒVƒ‡ƒ“‚ÍA--help‚ÅŠm”F‰Â”\
+# æ±ç”¨çš„ãªçµ„åˆã›ãƒ†ã‚¹ãƒˆé …ç›®ç”Ÿæˆãƒ„ãƒ¼ãƒ«
+#   ruby yact.rb modelfile  # PICTã§æŒ‡å®šã™ã‚‹ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æŒ‡å®š
+#   ruby yact.rb --help     # ãã®ä»–ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯ã€--helpã§ç¢ºèªå¯èƒ½
 
-Version = "00.00.03"
+Version = "00.00.04"
 
 $debug = false
 
 require "./YaParameters"
 
-# ƒRƒ}ƒ“ƒh‚Æ‚µ‚ÄŒÄ‚Î‚ê‚½‚Ìƒ‹[ƒ`ƒ“
+# ã‚³ãƒãƒ³ãƒ‰ã¨ã—ã¦å‘¼ã°ã‚ŒãŸæ™‚ã®ãƒ«ãƒ¼ãƒãƒ³
 def  main(command, argv)
 
-  # ƒIƒvƒVƒ‡ƒ“‚Ì‰ğÍ
+  # ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã®è§£æ
   params = YaParameters.new(argv)
   
-  # yactt‚ÌÀs
+  # yacttã®å®Ÿè¡Œ
   exec_yactt(params)
 end
 
-# ƒ‰ƒCƒuƒ‰ƒŠ‚Æ‚µ‚ÄŒÄ‚Î‚ê‚½‚Ìƒ‹[ƒ`ƒ“
+# ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã¨ã—ã¦å‘¼ã°ã‚ŒãŸæ™‚ã®ãƒ«ãƒ¼ãƒãƒ³
 def yactt_lib(options)
   params = YaParameters.new(nil, options)
   exec_yactt(params)
 end
 
-# Yactt‚ÌÀs
+# Yacttã®å®Ÿè¡Œ
 def exec_yactt(params)
-  require "pp"; pp params
-  # PICT‚Ìƒpƒ‰ƒƒ^‚©‚ç’†ŠÔƒIƒuƒWƒFƒNƒg‚ğ¶¬
+  # PICTã®ãƒ‘ãƒ©ãƒ¡ã‚¿ã‹ã‚‰ä¸­é–“ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆ
   require "./YaFrontPict"
   model = YaFrontPict.new(params)
 
-  # ƒoƒbƒNƒGƒ“ƒhw’è‚É‚æ‚Á‚ÄƒeƒXƒg¶¬ƒGƒ“ƒWƒ“‚ğİ’è
+  # ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰æŒ‡å®šã«ã‚ˆã£ã¦ãƒ†ã‚¹ãƒˆç”Ÿæˆã‚¨ãƒ³ã‚¸ãƒ³ã‚’è¨­å®š
   solver = nil
   case params.options[:back_end]
   when /cit/i
     if(params.options[:pair_strength] > 1)
-      # CIT-BACH‚ÌƒoƒbƒNƒGƒ“ƒh‚ğ“o˜^
+      # CIT-BACHã®ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰ã‚’ç™»éŒ²
       require "./YaBackCitBach"
       solver = YaBackCitBach.new(params, model)
     else
-      # ‹­“x‚P‚ÍƒTƒ|[ƒg‚µ‚Ä‚¢‚È‚¢‚Ì‚Å©—Í‚Å‰ğÍ
+      # å¼·åº¦ï¼‘ã¯ã‚µãƒãƒ¼ãƒˆã—ã¦ã„ãªã„ã®ã§è‡ªåŠ›ã§è§£æ
       require "./YaBackZddOne"
       solver = YaBackZddOne.new(params, model)
     end
   when /acts/i
-    # ACTS‚ÌƒoƒbƒNƒGƒ“ƒh‚ğ“o˜^
+    # ACTSã®ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰ã‚’ç™»éŒ²
     require "./YaBackActs"
     solver = YaBackActs.new(params, model)
   when /zdd/i
-    # ZDD‚ÌƒoƒbƒNƒGƒ“ƒh‚ğ“o˜^(–¢Š®)
+    # ZDDã®ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰ã‚’ç™»éŒ²(æœªå®Œ)
     require "./YaBackZdd"
     solver = YaBackZdd.new(params, model)
   else
     raise "back-end (#{params.options[:back_end]}) is invalid"
   end
   
-  # ³‹KŒ`‚ÌƒeƒXƒg¶¬(results‚Íeachƒƒ\ƒbƒh‚ğ‚Â(•¡”‚Ì)ƒeƒXƒgj
+  # æ­£è¦å½¢ã®ãƒ†ã‚¹ãƒˆç”Ÿæˆ(resultsã¯eachãƒ¡ã‚½ãƒƒãƒ‰ã‚’æŒã¤(è¤‡æ•°ã®)ãƒ†ã‚¹ãƒˆï¼‰
   results = solver.solve()
   
-  # ƒtƒƒ“ƒg‚ÌƒtƒH[ƒ}ƒbƒg‚ÅƒeƒXƒgo—Í
+  # ãƒ•ãƒ­ãƒ³ãƒˆã®ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã§ãƒ†ã‚¹ãƒˆå‡ºåŠ›
   results_string = model.write(results)
 
-  # Œ‹‰Ê‚Ìƒ`ƒFƒbƒN
+  # çµæœã®ãƒã‚§ãƒƒã‚¯
   if(params.options[:verify_results])
     verify_results(params, model, results)
   end
@@ -72,15 +71,15 @@ def exec_yactt(params)
   results_string
 end
 
-# Œ‹‰Ê‚Ìƒ`ƒFƒbƒN
+# çµæœã®ãƒã‚§ãƒƒã‚¯
 def verify_results(params, model, results)
   require "./YaVerifyResults"
   YaVerifyResults.verify(params, model, results)
 end
 
-# ƒoƒbƒNƒGƒ“ƒhÀs‚Ìstderr‚ğƒtƒ@ƒCƒ‹‚Éo—Íæ•ÏX
+# ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰å®Ÿè¡Œæ™‚ã®stderrã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«å‡ºåŠ›å…ˆå¤‰æ›´
 def save_stderror
-  # •W€ƒGƒ‰[‚Ì‘Ş”ğ
+  # æ¨™æº–ã‚¨ãƒ©ãƒ¼ã®é€€é¿
   stderr_save = STDERR.dup
   
   filename = "./temp/stderr_#{Process.pid}.txt"
@@ -89,7 +88,7 @@ def save_stderror
   stderr_save
 end
 
-# ƒoƒbƒNƒGƒ“ƒhÀs‚Ìstderr‚ğŒ³‚É–ß‚·
+# ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰å®Ÿè¡Œæ™‚ã®stderrã‚’å…ƒã«æˆ»ã™
 def recover_stderr(stderr_save)
   STDERR.flush
   new_fd = STDERR.dup
@@ -98,7 +97,7 @@ def recover_stderr(stderr_save)
 end
 
 
-# ƒfƒoƒbƒOƒvƒŠƒ“ƒg
+# ãƒ‡ãƒãƒƒã‚°ãƒ—ãƒªãƒ³ãƒˆ
 def dbgpp(variable, title = nil)
   if($debug)
     puts "===#{title}===" if title
@@ -110,13 +109,13 @@ def dbgpp(variable, title = nil)
   end
 end
 
-# ƒRƒ}ƒ“ƒh‚Æ‚µ‚ÄÀs‚³‚ê‚½‚Ìˆ—
+# ã‚³ãƒãƒ³ãƒ‰ã¨ã—ã¦å®Ÿè¡Œã•ã‚ŒãŸæ™‚ã®å‡¦ç†
 if __FILE__ == $0
   begin
-    # ƒRƒ}ƒ“ƒh–¼‚Æˆø”‚ğƒƒCƒ“ƒ‹[ƒ`ƒ“‚É“n‚·
+    # ã‚³ãƒãƒ³ãƒ‰åã¨å¼•æ•°ã‚’ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒãƒ³ã«æ¸¡ã™
     main($0, ARGV)
 
-    # ƒGƒ‰[ŒŸo‚Ìˆ—
+    # ã‚¨ãƒ©ãƒ¼æ¤œå‡ºæ™‚ã®å‡¦ç†
   rescue RuntimeError => ex
     $stderr.puts "yactt: " + ex.message
     exit(1)
