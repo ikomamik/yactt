@@ -1,5 +1,22 @@
 <!--<h1>Yactt#load_results</h1>
 <p>Find me in app/views/yactt/load_results.html.erb</p>
 -->
-<pre id='ya_results_work'><%= @ya_cit_results %></pre>
+<!--<div id='ya_results_work'><%= @ya_cit_results %></div>-->
+<span id='ya_results_work'>
+  <table border="1">
+  <% @ya_cit_results.split("\n").each_with_index do | line, i | %>
+    <tr>
+    <% if i == 0 %>
+      <% line.split("\t").each do | elem | %>
+        <th><%= elem %></th>
+      <% end %>
+    <% else %>
+      <% line.split("\t").each do | elem | %>
+        <td><%= elem %></td>
+      <% end %>
+    <% end %>
+    </tr>
+  <% end %>
+  </table>
+</span>
 

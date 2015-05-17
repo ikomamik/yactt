@@ -28,7 +28,7 @@
         var results = $(this).contents().find('#ya_results_work');
         if(results.length > 0) {
           $('#ya_result_work').hide();
-          $('#ya_result').text(results.text());
+          $('#ya_result').html(results.html());
         } else {
           $('#ya_result').text('Failed');
           $('#ya_result_work').show();
