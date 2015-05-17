@@ -5,6 +5,6 @@ class YacttController < ApplicationController
   def help
   end
 
-  def load_viewer_param
+  def load_results
   end
 end

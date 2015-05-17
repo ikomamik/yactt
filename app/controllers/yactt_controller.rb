@@ -8,7 +8,7 @@ class YacttController < ApplicationController
     pp @ya_pict_param
   end
   
-  def load_viewer_param
+  def load_results
     pp params
     puts "FOO"
     # exec_cit_bach(params)
