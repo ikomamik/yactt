@@ -21,6 +21,9 @@ doc/
 .idea
 .secret
 
+# test
+/test
+
 # Helper part
 /yactt/temp/yact*
 /yactt/zdd
