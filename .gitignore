@@ -26,5 +26,6 @@ doc/
 
 # Helper part
 /yactt/temp/yact*
+/yactt/temp/acts*
 /yactt/zdd
 /yactt/*.txt
