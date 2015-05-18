@@ -1,10 +1,10 @@
     <h1>Yet Another Combinatorial Testing Tool</h1>
     <blockquote>
-      Experimental implementation of <a href="http://blogs.msdn.com/b/nagasatish/archive/2006/11/30/pairwise-testing-pict-tool.aspx" target="_blank">PICT</a> clone powered by <a href="http://www-ise4.ist.osaka-u.ac.jp/~t-tutiya/CIT/" target="_blank">CIT-BACH</a>.<br/>
+      An experimental implementation of <a href="http://blogs.msdn.com/b/nagasatish/archive/2006/11/30/pairwise-testing-pict-tool.aspx" target="_blank">PICT</a> clone powered by <a href="http://www-ise4.ist.osaka-u.ac.jp/~t-tutiya/CIT/" target="_blank">CIT-BACH</a>.<br/>
       For anyone who has PICT parameters and wants to get the results while his/her life.
     </blockquote>
-      <div style="background:gainsboro">
-        <h2>Specify <a href="http://www.amibugshare.com/pict/help.html" target="_blank">PICT parameters</a></h2>
+      <div>
+        <h2 style="background:gainsboro">Specify <a href="http://www.amibugshare.com/pict/help.html" target="_blank">PICT parameters</a></h2>
         <p><!--Select template, -->Upload local parameter file (ASCII or UTF-8 encoding), or directly write parameters to the textarea.</p>
         <!--Template:
         <select name="ya_template" id="ya_template">
@@ -14,13 +14,13 @@
           <option value="sample3.pict" disabled>many constraints</option>
         </select>&nbsp;-->
         <form id="ya_load_file" method="POST" target="ya_load_work" action="./load_pict_param" enctype="multipart/form-data" style="width:40px; display: inline-block; display: inline">
-           Upload:<input type="file" id="ya_paramFile" name="ya_paramFile" value="PICT parameter" />
+           <input type="file" id="ya_paramFile" name="ya_paramFile" value="PICT parameter" />
            <input type="submit" value="load"  id="ya_submitParamFile" style="display:none" />
         </form>
         <iframe id="ya_load_work" name="ya_load_work" style="display:none"></iframe>
       </div>
       <form id="op_load_file" method="POST" action="./load_results" target="ya_result_work" enctype="multipart/form-data" style="width:40px; display: inline-block; display: inline">
-      <div style="background:gainsboro">
+      <div>
         &nbsp;&nbsp;<textarea name="ya_pictParam" id="ya_pictParam" rows="15" cols="80"></textarea>
         <br/>
         Value delimiter: <input name="ya_value_delimiter" type="text" size="1" value=","/>,&nbsp;
@@ -28,8 +28,8 @@
         Prefix of negative value: <input name="ya_negative_prefix" type="text" size="1"  value="~"/>,&nbsp;
         Case Sensitive: <input name="ya_case_sensitive" type="checkbox" checked/>&nbsp;
       </div>
-      <div style="background:antiquewhite">
-        <h2>Set execution parameters (option)</h2>
+      <div>
+        <h2 style="background:antiquewhite">Set execution parameters (option)</h2>
         Solver:
         <select name="ya_back_end">
           <option value="CIT">CIT-BACH</option>
@@ -51,14 +51,14 @@
         Expired Second: <input name="ya_timeout" type="text" size="1" />&nbsp;
         Verify Results: <input name="ya_verify" type="checkbox" />&nbsp;
       </div>
-      <div style="background:lightblue">
-        <h2>Submit parameters</h2>
+      <div>
+        <h2 style="background:lightblue">Submit parameters</h2>
         &nbsp;&nbsp;<input type="submit"  id="ya_submitFile"  value="Generate Test Data" />
         <br/><br/>
       </div>
     </form>
-    <div id='ya_result_div' style="background:cornsilk" style="display:none">
-        <h2>Results</h2>
+    <div id='ya_result_div'>
+        <h2 style="background:cornsilk">Results</h2>
         <span id="ya_result"></span>
     </div>
     <iframe width="100%" id='ya_result_work' name="ya_result_work" style="display:none"></iframe>
