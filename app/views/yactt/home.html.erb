@@ -1,7 +1,11 @@
     <h1>Yet Another Combinatorial Testing Tool</h1>
+    <blockquote>
+      Experimental implementation of <a href="http://blogs.msdn.com/b/nagasatish/archive/2006/11/30/pairwise-testing-pict-tool.aspx" target="_blank">PICT</a> clone powered by <a href="http://www-ise4.ist.osaka-u.ac.jp/~t-tutiya/CIT/" target="_blank">CIT-BACH</a>.<br/>
+      For anyone who has PICT parameters and wants to get the results while his/her life.
+    </blockquote>
       <div style="background:gainsboro">
-        <h2>Specify PICT parameters</h2>
-        <p><!--Select template, -->Upload local parameter file (ASCII or UTF-8 encoding), or Write parameters to textarea.</p>
+        <h2>Specify <a href="http://www.amibugshare.com/pict/help.html" target="_blank">PICT parameters</a></h2>
+        <p><!--Select template, -->Upload local parameter file (ASCII or UTF-8 encoding), or directly write parameters to the textarea.</p>
         <!--Template:
         <select name="ya_template" id="ya_template">
           <option value="">select samples</option>
@@ -25,7 +29,7 @@
         Case Sensitive: <input name="ya_case_sensitive" type="checkbox" checked/>&nbsp;
       </div>
       <div style="background:antiquewhite">
-        <h2>Set execution parameters</h2>
+        <h2>Set execution parameters (option)</h2>
         Solver:
         <select name="ya_back_end">
           <option value="CIT">CIT-BACH</option>
@@ -49,7 +53,8 @@
       </div>
       <div style="background:lightblue">
         <h2>Submit parameters</h2>
-        <input type="submit"  id="ya_submitFile"  value="Generate Test Data" />
+        &nbsp;&nbsp;<input type="submit"  id="ya_submitFile"  value="Generate Test Data" />
+        <br/><br/>
       </div>
     </form>
     <div id='ya_result_div' style="background:cornsilk" style="display:none">
