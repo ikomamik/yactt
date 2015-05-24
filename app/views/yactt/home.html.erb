@@ -1,10 +1,12 @@
-    <h1>Yet Another Combinatorial Testing Tool</h1>
+<div style="margin-left : 30px; margin-bottom : 50px; width : 770px;">
+    <h1 class="ya_title_header">Yet Another Combinatorial Testing Tool</h1>
+    <hr/>
     <blockquote>
-      An experimental implementation of <a href="http://blogs.msdn.com/b/nagasatish/archive/2006/11/30/pairwise-testing-pict-tool.aspx" target="_blank">PICT</a> clone powered by <a href="http://www-ise4.ist.osaka-u.ac.jp/~t-tutiya/CIT/" target="_blank">CIT-BACH</a>.<br/>
-      For anyone who has PICT parameters and wants to get the results while his/her life.
+      An experimental implementation of <a href="http://blogs.msdn.com/b/nagasatish/archive/2006/11/30/pairwise-testing-pict-tool.aspx" target="_blank">PICT</a> clone powered by <a href="http://www-ise4.ist.osaka-u.ac.jp/~t-tutiya/CIT/" target="_blank">CIT-BACH</a> for anyone who has PICT parameters and wants to get the results while his/her life.<br/>
+      Yactt is a free software copyrighted by Ikomamik. You can get source codes from <a href="https://github.com/ikomamik/yactt" target="_blank">https://github.com/ikomamik/yactt</a>
     </blockquote>
       <div>
-        <h2 style="background:gainsboro">Specify <a href="http://www.amibugshare.com/pict/help.html" target="_blank">PICT parameters</a></h2>
+        <h2 class="ya_title_header2">Specify <a href="http://www.amibugshare.com/pict/help.html" target="_blank">PICT parameters</a></h2>
         <p><!--Select template, -->Upload local parameter file (ASCII or UTF-8 encoding), or directly write parameters to the textarea.</p>
         <!--Template:
         <select name="ya_template" id="ya_template">
@@ -29,7 +31,7 @@
         Case Sensitive: <input name="ya_case_sensitive" type="checkbox" checked/>&nbsp;
       </div>
       <div>
-        <h2 style="background:antiquewhite">Set execution parameters (option)</h2>
+        <h2 class="ya_title_header2">Set execution parameters (option)</h2>
         Solver:
         <select name="ya_back_end">
           <option value="CIT">CIT-BACH</option>
@@ -52,14 +54,16 @@
         Verify Results: <input name="ya_verify" type="checkbox" />&nbsp;
       </div>
       <div>
-        <h2 style="background:lightblue">Submit parameters</h2>
+        <h2 class="ya_title_header2">Submit parameters</h2>
         &nbsp;&nbsp;<input type="submit"  id="ya_submitFile"  value="Generate Test Data" />
         <br/><br/>
       </div>
     </form>
     <div id='ya_result_div'>
-        <h2 style="background:cornsilk">Results</h2>
+        <h2 class="ya_title_header2">Results</h2>
         <span id="ya_result"></span>
     </div>
     <iframe width="100%" id='ya_result_work' name="ya_result_work" style="display:none"></iframe>
-
+    <hr/>
+    Copyright (c) 2015 Ikoma, Mikio. All rights reserved.
+</div>

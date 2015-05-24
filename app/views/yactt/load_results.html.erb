@@ -3,8 +3,10 @@
 -->
 <!--<div id='ya_results_work'><%= @ya_cit_results %></div>-->
 <span id='ya_results_work'>
-  <table border="1">
-  <% @ya_cit_results.split("\n").each_with_index do | line, i | %>
+  <% lines = @ya_cit_results.split("\n") %>
+  <%= lines.size - 1 %> results generated.
+  <table class="ya_cit_results"><tbody>
+  <% lines.each_with_index do | line, i | %>
     <tr>
     <% if i == 0 %>
       <% line.split("\t").each do | elem | %>
@@ -17,6 +19,6 @@
     <% end %>
     </tr>
   <% end %>
-  </table>
+  </tbody></table>
 </span>
 
