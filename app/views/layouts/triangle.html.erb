@@ -55,6 +55,11 @@
       $('#hidden_question').show();
     }
     
+    function check_tr_num() {
+      $("#answer_num").text($('#table_0 tbody').children().length - 1);
+    }
+
+    
     // ボタンを押した時の処理を登録(Jquery)
     $(function() {
       $('#submit_it').click(
@@ -73,10 +78,12 @@
           new_tr.find('#trig_type').val(current_type);
           $(new_tr.children('td:eq(5)'))[0].innerText = "";
           current_tr.after( new_tr );
+          check_tr_num();
         });
       $('#remove_0').click(
         function() {
           $(this).closest('tr').remove();
+          check_tr_num();
         });
     });
     
