@@ -64,7 +64,9 @@
       $('#clone_0').click(
         function() {
           var current_tr = $(this).closest('tr');
+          var current_type = current_tr.find('#trig_type').val();
           var new_tr = current_tr.clone( true );
+          new_tr.find('#trig_type').val(current_type);
           current_tr.after( new_tr );
         });
       $('#remove_0').click(
