@@ -51,11 +51,15 @@
     
     var case_num = 1;
     
+    function show_hidden_question(){
+      $('#hidden_question').show();
+    }
+    
     // ボタンを押した時の処理を登録(Jquery)
     $(function() {
       $('#submit_it').click(
         function() {
-          $('#hidden_question').show();
+          show_hidden_question();
         });
       $('#button_0').click(
         function() {
@@ -67,6 +71,7 @@
           var current_type = current_tr.find('#trig_type').val();
           var new_tr = current_tr.clone( true );
           new_tr.find('#trig_type').val(current_type);
+          $(new_tr.children('td:eq(5)'))[0].innerText = "";
           current_tr.after( new_tr );
         });
       $('#remove_0').click(
@@ -74,7 +79,7 @@
           $(this).closest('tr').remove();
         });
     });
-
+    
     </script>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
