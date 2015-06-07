@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "yactt/triangle"
   get "yactt/home"
   get "yactt/help"
   post "yactt/load_pict_param"
