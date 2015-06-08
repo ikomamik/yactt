@@ -1,0 +1,56 @@
+    <h1>マイヤーズの三角形問題</h1><hr>
+    <form id="tri_submit" method="POST" target="load_work" action="./tri_submit" 
+          enctype="multipart/form-data" style="display: inline-block; display: inline">
+    <!--      
+    <table border="1">
+      <tr><th>苗字</th><th>名前</th><th>操作</th></tr>
+      <tr>
+        <td><input type="text" size="15" name="family_name" /></td>
+        <td><input type="text" size="15" name="given_name" /></td>
+        <td><input type="submit" value="提出"  id="submit_it" /></td>
+      </tr>
+    </table>
+    <br/>
+    -->
+    <h2>問題</h2>
+    <dl>
+      <dt>以下に述べるプログラムの動作を確認するために最小限必要なテストを列挙せよ。</dt>
+      <dd>このプログラムは、三角形の３つの辺を表す数x, y, zを読む。プログラムは、三角形が正三角形か、二等辺三角形か不等辺三角形か、又は三角形以外・入力値エラーのうちのどれであるかを決めるメッセージを出力する。このプログラムの実装は、このHTMLの中にJavaScriptとして記述されている。テストケース表の辺を入力した後に、「チェック」ボタンを押すと、入力した値を使ってプログラムがテストされる。</dd>
+      <dd>テストケースを増やしたいときには、「複製」のボタンを、削除したい場合は「削除」ボタンを押すこと。</dd>
+    </dl>
+    <h2>テストケース表</h2>
+    テストケースの数＝<span id="answer_num">1</span>
+    <table id="table_0" border="1">
+      <tr>
+        <th>辺x</th><th>辺y</th><th>辺z</th>
+        <th>期待結果</th><th>操作</th><th width="280">メッセージ</th>
+      </tr>
+      <tr>
+        <td><input type="text" size="18" maxlength="100" style="text-align:right"/></td>
+        <td><input type="text" size="18" maxlength="100" style="text-align:right"/></td>
+        <td><input type="text" size="18" maxlength="100" style="text-align:right"/></td>
+        <td>
+          <select id="trig_type">
+            <option value="正三角形">正三角形</option>
+            <option value="二等辺三角形">二等辺三角形</option>
+            <option value="不等辺三角形">不等辺三角形</option>
+            <option value="三角形以外">三角形以外</option>
+            <option value="入力値エラー">入力値エラー</option>
+          </select>
+        </td>
+        <td>
+          <input type="button" id="button_0" value="チェック"/>
+          <input type="button" id="clone_0" value="複製"/>
+          <input type="button" id="remove_0" value="削除"/>
+        </td>
+        <td id="message_0"></td>
+      </tr>
+    </table>
+    </form>
+    <hr/>
+    <a onclick="show_hidden_question();">おまけ問題</a>
+    <br/>
+    <div id="hidden_question" style="display:none">
+    <h2>おまけ問題</h2>
+    <p>(実は)このプログラムには不良がある。本当は正三角形なのにそうでないと出力される不良や、本当は正三角形でないのに、正三角形と出力される不良もある。この類の不良を見つけられるようなテストを考えよ。</p>
+    </div>
