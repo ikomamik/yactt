@@ -3,11 +3,6 @@ require "tempfile"
 
 class YacttController < ApplicationController
 
-  # 
-  def triangle
-    render :layout => 'triangle'
-  end
-  
   def load_pict_param
     puts "PICT"
     @ya_pict_param = params[:ya_paramFile].tempfile.read
