@@ -53,6 +53,9 @@ class YaBackActs
       base_tests_path = base_fp.path
     end
     
+    # ACTSディレクトリにあるjarを探索（バージョン番号が大きいものを選択）
+    acts_jar = Dir.glob("ACTS/acts_cmd_*.jar").sort[-1]
+    
     # ACTSのコマンドフラグの設定
     command = "java -Doutput=csv -Drandstar=on -Dchandler=solver"
     if(@command_options[:pair_strength] == 0)
@@ -60,7 +63,7 @@ class YaBackActs
     else
       command += " -Ddoi=#{@command_options[:pair_strength]}"
     end
-    command += " -jar ACTS/acts_cmd_2.92.jar cmd #{param_path} #{result_path}"
+    command += " -jar #{acts_jar} cmd #{param_path} #{result_path}"
     
     # 実行(systemコマンドや``では、タイムアウトを拾えないのでpopenで実行)
     results = ""
@@ -113,7 +116,7 @@ class YaBackActs
     acts_params += "[Parameter]\n"
     params.each do | param_name, values |
       acts_params += "#{param_name[1..-1]} (enum) : "
-      acts_params += "#{values.map{|value| value[1..-1]}.join(", ")}\n"
+      acts_params += "#{values.map{|value| value[1..-1]}.shuffle.join(", ")}\n"
     end
     
     # サブモデルのセット

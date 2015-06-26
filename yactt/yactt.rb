@@ -20,7 +20,7 @@
 #   ruby yact.rb modelfile  # PICTで指定するモデルファイルを指定
 #   ruby yact.rb --help     # その他のオプションは、--helpで確認可能
 
-Version = "00.00.04"
+Version = "00.00.05"
 
 $debug = false
 
@@ -44,6 +44,9 @@ end
 
 # Yacttの実行
 def exec_yactt(params)
+  # ランダムのシード設定
+  srand(params.options[:random_seed]) if(params.options[:random_seed])
+
   # PICTのパラメタから中間オブジェクトを生成
   require "./YaFrontPict"
   model = YaFrontPict.new(params)

@@ -109,7 +109,8 @@ class YaBackCitBach
     # パラメタ定義のセット
     cit_params += "# Parameters\n"
     params.each do | param_name, values |
-      cit_params += "#{param_name} (#{values.join(" ")})\n"
+      # 値の順番はランダムにする
+      cit_params += "#{param_name} (#{values.shuffle.join(" ")})\n"
     end
     
     # サブモデルのセット
