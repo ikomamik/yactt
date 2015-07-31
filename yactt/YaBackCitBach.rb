@@ -30,8 +30,8 @@ class YaBackCitBach
     @params    = model_front.solver_params # 入力されたパラメタ
     @submodels = model_front.submodels     # サブモデル
     
-    @cit_params = setParams(@params, @model_front)
     @cit_base = set_base_tests(@params, model_front.base_tests)
+    @cit_params = setParams(@params, @model_front)
   end
   
   # CIT-BACHの実行

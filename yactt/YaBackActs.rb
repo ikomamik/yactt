@@ -30,8 +30,8 @@ class YaBackActs
     @params    = model_front.solver_params # 入力されたパラメタ
     @submodels = model_front.submodels     # サブモデル
     
-    @acts_params = setParams(@params, @model_front)
     @acts_base = set_base_tests(@params, model_front.base_tests)
+    @acts_params = setParams(@params, @model_front)
   end
   
   # ACTSの実行
@@ -44,15 +44,6 @@ class YaBackActs
       fp.puts @acts_params
     end
 
-    base_tests_path = nil
-    base_fp = nil
-    if(@acts_base)
-      base_fp = Tempfile.open("yact", "./temp")
-      base_fp.puts @acts_base
-      base_fp.flush
-      base_tests_path = base_fp.path
-    end
-    
     # ACTSディレクトリにあるjarを探索（バージョン番号が大きいものを選択）
     acts_jar = Dir.glob("ACTS/acts_cmd_*.jar").sort[-1]
     
@@ -63,6 +54,13 @@ class YaBackActs
     else
       command += " -Ddoi=#{@command_options[:pair_strength]}"
     end
+    
+    if(@acts_base)    # ベースがある場合は、拡張モード
+      command += " -Dmode=extend"
+    else
+      command += " -Dmode=scratch"
+    end
+    
     command += " -jar #{acts_jar} cmd #{param_path} #{result_path}"
     
     # 実行(systemコマンドや``では、タイムアウトを拾えないのでpopenで実行)
@@ -84,7 +82,6 @@ class YaBackActs
       results += result
     end
     cmd_io.close()
-    base_fp.close! if(@acts_base)
     results = results.kconv(Kconv::UTF8, Kconv::SJIS).split("\n")
     
     # エラー時の処理
@@ -110,7 +107,7 @@ class YaBackActs
     
     # システム定義のセット
     acts_params += "[System]\n"
-    acts_params += "Name: yact_parameter\n"
+    acts_params += "Name: yactt_parameter\n"
     
     # パラメタ定義のセット
     acts_params += "[Parameter]\n"
@@ -157,6 +154,12 @@ class YaBackActs
         acts_params += "(#{other_values.map{|value| convert_false_item(value)}.join("&&")})"
         acts_params += ")\n"
       end
+    end
+    
+    # ベースとなるテストセットの追加
+    if(@acts_base)
+      acts_params += "[Test Set]\n"
+      acts_params += @acts_base
     end
     
     acts_params
@@ -230,8 +233,8 @@ class YaBackActs
   # ベースとなるテストの入力
   def set_base_tests(params, base_tests)
     if(base_tests)
-      params.keys.sort.join(",") + "\n" +
-      base_tests.split("+").map{|a_test| a_test.split("*").join(",")}.join("\n")
+      params.keys.sort.join(",").gsub("@", "") + "\n" +
+      base_tests.split("+").map{|a_test| a_test.split("*").join(",")}.join("\n").gsub("@", "")
     else
       nil
     end
