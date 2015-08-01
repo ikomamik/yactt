@@ -310,7 +310,7 @@ class YaFrontPict
   def analyze_seed_file()
     if(@pict_seed_file)
       content = IO.read(@pict_seed_file) rescue raise("Seed file(#{@pict_seed_file}) not found")
-      lines = content.split("\n")
+      lines = content.split(/\r?\n/)
       
       # ヘッダ部分の読み込み
       header_elems = lines[0].split(/\t/)
