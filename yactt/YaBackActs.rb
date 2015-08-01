@@ -233,11 +233,28 @@ class YaBackActs
   # ベースとなるテストの入力
   def set_base_tests(params, base_tests)
     if(base_tests)
-      params.keys.sort.join(",").gsub("@", "") + "\n" +
-      base_tests.split("+").map{|a_test| a_test.split("*").join(",")}.join("\n").gsub("@", "")
+      sorted_param_keys =  params.keys.sort  # ヘッダとなるパラメタのキー
+      result = sorted_param_keys.join(",").gsub("@", "") + "\n"
+
+      # ベースとなるテストで今回のパラメタに含まれていないものは"*"にする。
+      base_tests.split("+").each do | base_test |
+        base_params = base_test.split("*")
+        result_params = []
+        sorted_param_keys.each do | param_key |
+          param_body = params[param_key] & base_params
+          if(param_body.size > 0)
+            result_params.push param_body
+          else
+            result_params.push "*"
+          end
+        end
+        result += result_params.join(",") + "\n"
+      end
+      result.gsub!("@", "")
     else
-      nil
+      result = nil
     end
+    result
   end
 end
 

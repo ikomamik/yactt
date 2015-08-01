@@ -222,11 +222,27 @@ class YaBackCitBach
   # ベースとなるテストの入力
   def set_base_tests(params, base_tests)
     if(base_tests)
-      params.keys.sort.join(",") + "\n" +
-      base_tests.split("+").map{|a_test| a_test.split("*").join(",")}.join("\n")
+      sorted_param_keys =  params.keys.sort  # ヘッダとなるパラメタのキー
+      result = sorted_param_keys.join(",") + "\n"
+
+      # ベースとなるテストで今回のパラメタに含まれていないものは" "にする。
+      base_tests.split("+").each do | base_test |
+        base_params = base_test.split("*")
+        result_params = []
+        sorted_param_keys.each do | param_key |
+          param_body = params[param_key] & base_params
+          if(param_body.size > 0)
+            result_params.push param_body
+          else
+            # 使用では""でも良いことになっているが、" "でないと通らない
+            result_params.push " "
+          end
+        end
+        result += result_params.join(",") + "\n"
+      end
     else
-      nil
+      result = nil
     end
+    result
   end
 end
-
