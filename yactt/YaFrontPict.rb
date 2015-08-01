@@ -316,15 +316,25 @@ class YaFrontPict
       header_elems = lines[0].split(/\t/)
       
       # コンテンツ部分の読み込み、変換
+      warn_error = []
       tests = lines[1..-1].map do | line |
         values = line.split(/\s+/).map.with_index do | value, i |
           param_collate = @options[:case_sensitive]?(header_elems[i]):(header_elems[i].downcase)
-          param = @name_map2[param_collate] || raise("Header [#{header_elems[i]}] is invalid in seed file")
-          value_hashes = @pict_params[param_collate] || raise("Seed file invalid")
-          offset = value_hashes.index {|value_hash| value_hash[:value].index(value)}
-          "#{param}_#{offset}"
+          param = @name_map2[param_collate]
+          if(param)
+            value_hashes = @pict_params[param_collate] || raise("Seed file invalid")
+            offset = value_hashes.index {|value_hash| value_hash[:value].index(value)}
+            "#{param}_#{offset}"
+          else
+            warn_error |= [i]
+            nil  # 無視
+          end
         end
-        values.join("*")
+        values.compact.join("*")  # nilは削除して*でまとめる。
+      end
+      if(warn_error.size > 0)
+        error_header = warn_error.map{|i| header_elems[i]}.join(",")
+        warn("Warning. Header [#{error_header}] is invalid in seed file")
       end
       @base_tests = tests.join("+")
     end
