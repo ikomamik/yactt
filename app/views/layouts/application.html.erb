@@ -39,6 +39,34 @@
         }
       });
       
+      // シードファイルを指定するチェックボックスを変えた時の処理
+      $('#ya_seeding_test').change(function(event) {
+        if($(this).is(':checked')) {
+          $("#ya_pictSeedArea").show();
+        } else {
+          $("#ya_pictSeedArea").hide("normal");
+        }
+      });
+
+      // ベーステストを入れる部分はタブキーを有効にする
+      $("#ya_pictSeedTests").focus(function(){
+        window.document.onkeydown = function(e){
+          if(e.keyCode === 9) {
+            e.preventDefault();
+            var elem = e.target;
+            var val = elem.value;
+            var pos = elem.selectionStart;
+            elem.value = val.substr(0, pos) + '\t' + val.substr(pos, val.length);
+            elem.setSelectionRange(pos + 1, pos + 1);
+          }
+        }
+      });
+      $("#ya_pictSeedTests").blur(function(){
+          window.document.onkeydown = function(e){
+              return true;
+          }
+      });
+
     });
   </script>
   <style type="text/css">

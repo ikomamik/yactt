@@ -17,16 +17,31 @@ class YacttController < ApplicationController
   end
   
   def cit_bach(params)
+    # モデルファイルの設定
     fp = Tempfile.open("cit_bach_temp")
     fp.print params["ya_pictParam"]
     fp.flush
     params["ya_model_file"] = fp.path
+
+    # ベーステストのファイルの設定
+    if(params["ya_pictSeedTests"])
+      fp2 = Tempfile.open("cit_bach_temp2")
+      fp2.puts params["ya_pictSeedTests"]
+      fp2.flush
+      system("cat #{fp2.path}")
+      params["ya_seed_file"] = fp2.path
+    end
+
+    # オプションの変換
     options = convert_params(params)
     Dir.chdir("./yactt") do | yactt_path |
       require_dependency "./yactt.rb"
       @ya_cit_results = yactt_lib(options)
     end
+    
+    # 不要になった一時ファイルの削除
     fp.close!
+    fp2.close! if(params["ya_pictSeedTests"])
   end
   
   def convert_params(post_params)
