@@ -24,7 +24,7 @@ class YacttController < ApplicationController
     params["ya_model_file"] = fp.path
 
     # ベーステストのファイルの設定
-    if(params["ya_pictSeedTests"])
+    if(params["ya_seeding_test"] == "on")
       fp2 = Tempfile.open("cit_bach_temp2")
       fp2.puts params["ya_pictSeedTests"]
       fp2.flush
@@ -41,7 +41,7 @@ class YacttController < ApplicationController
     
     # 不要になった一時ファイルの削除
     fp.close!
-    fp2.close! if(params["ya_pictSeedTests"])
+    fp2.close! if(params["ya_seeding_test"] == "on")
   end
   
   def convert_params(post_params)
