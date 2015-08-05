@@ -85,7 +85,7 @@ class YaBackCitBach
     cmd_io.close()
     param_fp.close!
     base_fp.close! if(@cit_base)
-    results = results.kconv(Kconv::UTF8, Kconv::SJIS).split("\n")
+    results = results.kconv(Kconv::UTF8).split("\n")
 
     # エラー時の処理
     if(!results[0].match(/^#SUCCESS,/))

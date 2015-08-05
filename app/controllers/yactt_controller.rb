@@ -71,7 +71,7 @@ class YacttController < ApplicationController
     fp.flush
     path = fp.path
     flags = set_flags(params)
-    command = "LANG=C ./yactt #{flags} #{path}"
+    command = "./yactt #{flags} #{path}"
     puts "cd yactt; #{command}"
     # system("cd yactt; #{command}")
     @ya_cit_results = `cd yactt; #{command} 2>&1`
