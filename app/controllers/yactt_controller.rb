@@ -28,7 +28,6 @@ class YacttController < ApplicationController
       fp2 = Tempfile.open("cit_bach_temp2")
       fp2.puts params["ya_pictSeedTests"]
       fp2.flush
-      system("cat #{fp2.path}")
       params["ya_seed_file"] = fp2.path
     end
 
@@ -36,7 +35,12 @@ class YacttController < ApplicationController
     options = convert_params(params)
     Dir.chdir("./yactt") do | yactt_path |
       require_dependency "./yactt.rb"
-      @ya_cit_results = yactt_lib(options)
+      begin
+        @ya_cit_message = nil
+        @ya_cit_results = yactt_lib(options)
+      rescue RuntimeError => ex
+        @ya_cit_message = ex.message
+      end
     end
     
     # 不要になった一時ファイルの削除
@@ -67,7 +71,7 @@ class YacttController < ApplicationController
     fp.flush
     path = fp.path
     flags = set_flags(params)
-    command = "./yactt #{flags} #{path}"
+    command = "LANG=C ./yactt #{flags} #{path}"
     puts "cd yactt; #{command}"
     # system("cd yactt; #{command}")
     @ya_cit_results = `cd yactt; #{command} 2>&1`

@@ -3,22 +3,27 @@
 -->
 <!--<div id='ya_results_work'><%= @ya_cit_results %></div>-->
 <span id='ya_results_work'>
-  <% lines = @ya_cit_results.split("\n") %>
-  <%= lines.size - 1 %> results generated.
-  <table class="ya_cit_results"><tbody>
-  <% lines.each_with_index do | line, i | %>
-    <tr>
-    <% if i == 0 %>
-      <% line.split("\t").each do | elem | %>
-        <th><%= elem %></th>
+  <% if @ya_cit_message %>
+    Failed to generate tests:<br/>
+    <code><%= @ya_cit_message %></code>
+  <% else %>
+    <% lines = @ya_cit_results.split("\n") %>
+    <%= lines.size - 1 %> results generated.
+    <table class="ya_cit_results"><tbody>
+    <% lines.each_with_index do | line, i | %>
+      <tr>
+      <% if i == 0 %>
+        <% line.split("\t").each do | elem | %>
+          <th><%= elem %></th>
+        <% end %>
+      <% else %>
+        <% line.split("\t").each do | elem | %>
+          <td><%= elem %></td>
+        <% end %>
       <% end %>
-    <% else %>
-      <% line.split("\t").each do | elem | %>
-        <td><%= elem %></td>
-      <% end %>
+      </tr>
     <% end %>
-    </tr>
+    </tbody></table>
   <% end %>
-  </tbody></table>
 </span>
 
