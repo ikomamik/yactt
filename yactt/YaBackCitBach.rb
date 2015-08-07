@@ -126,10 +126,22 @@ class YaBackCitBach
     restricts.each do | restrict |
       cit_if = convert_restrict(restrict[:if])
       cit_then = convert_restrict(restrict[:then])
+      raise "Invalid then-clause" if(restrict[:then] && !cit_then)
       cit_else = convert_restrict(restrict[:else])
+      raise "Invalid else-clause" if(restrict[:else] && !cit_else)
       cit_uncond = convert_restrict(restrict[:uncond])
+      raise "Invalid unconditional constraint" if(restrict[:uncond] && !cit_uncond)
+      
       if(cit_if && cit_else)
+        # if then elseの形式
         cit_params += "(ite #{cit_if} #{cit_then} #{cit_else})\n"
+      elsif(!cit_if && cit_else)
+        # if then else or if elseの形式だがifの適合値が無い場合は無条件にelse
+        warn "Invalid if-clause."
+        cit_params += "#{cit_else}\n"
+      elsif(!cit_if && cit_then && !cit_else)
+        # if thenの形式だがifの適合値が無い場合はエラー
+        raise "no result found in if-clause."
       elsif(cit_if)
         cit_params += "(if  #{cit_if} #{cit_then})\n"
       elsif(cit_uncond)
@@ -179,6 +191,7 @@ class YaBackCitBach
         new_term
       }
       break if(new_restrict.match(/^#{item_expr}$/))
+      return nil if(new_restrict == "()")
     end
     #puts "****"
     #pp new_restrict

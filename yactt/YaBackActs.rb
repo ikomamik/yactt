@@ -130,12 +130,23 @@ class YaBackActs
     restricts.each do | restrict |
       acts_if = convert_restrict(restrict[:if])
       acts_then = convert_restrict(restrict[:then])
+      raise "Invalid then-clause" if(restrict[:then] && !acts_then)
       acts_else = convert_restrict(restrict[:else])
+      raise "Invalid else-clause" if(restrict[:else] && !acts_else)
       acts_uncond = convert_restrict(restrict[:uncond])
+      raise "Invalid unconditional constraint" if(restrict[:uncond] && !acts_uncond)
+      
       if(acts_if && acts_else)
         # raise "ACTS does not support ELSE operator"
         acts_params += "(#{acts_if} => #{acts_then})\n"
         acts_params += "(!#{acts_if} => #{acts_else})\n"
+      elsif(!acts_if && acts_else)
+        # if then else or if elseの形式だがifの適合値が無い場合は無条件にelse
+        warn "Invalid if-clause."
+        acts_params += "#{acts_else}\n"
+      elsif(!acts_if && acts_then && !acts_else)
+        # if thenの形式だがifの適合値が無い場合はエラー
+        raise "no result found in if-clause."
       elsif(acts_if)
         acts_params += "(#{acts_if} => #{acts_then})\n"
       elsif(acts_uncond)
@@ -186,6 +197,7 @@ class YaBackActs
         new_term
       }
       break if(new_restrict.match(/^#{item_expr}$/))
+      return nil if(new_restrict == "()")
     end
     #puts "****"
     #pp new_restrict
