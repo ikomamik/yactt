@@ -77,9 +77,13 @@ class YaFrontPict
   # モデルファイルの解析
   def analyze_model_file()
     content = IO.read(@pict_model_file) rescue raise("Model file(#{@pict_model_file}) not found")
+    content.force_encoding("utf-8")
     
     # コメントの削除
     content.gsub!(/#.+$/, "")
+    
+    # 空白(0xa0等）の変換,圧縮
+    content.gsub!(/[\u00A0]+/, " ")
     
     # パラメタの定義部分の解析（解析終了後削除）
     content.gsub!(@param_expr){
