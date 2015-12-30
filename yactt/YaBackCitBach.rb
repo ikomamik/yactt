@@ -51,7 +51,12 @@ class YaBackCitBach
     end
     
     # citディレクトリにあるjarを探索（バージョン番号が大きいものを選択）
-    cit_jar = Dir.glob("cit/cit-bach*.jar").sort[-1]
+    # Cygwinでの実行時のために相対パスでJarファイルを参照する。
+    require "pathname"
+    jarfile = "#{File.dirname(__FILE__)}/cit/cit-bach*.jar"
+    jarfile = Pathname(jarfile).relative_path_from(Pathname(Dir.pwd))
+    cit_jar = Dir.glob(jarfile).sort[-1]
+    raise "cit-bach jar file is not in #{jarfile}" unless cit_jar
     
     # CITのコマンドフラグの設定
     command = "java -jar #{cit_jar} -i #{param_path}"
@@ -118,7 +123,7 @@ class YaBackCitBach
     @submodels.each do | submodel |
       params = submodel[:params].keys
       cit_params += "{#{params.join(" ")}}\n"
-      warn "yact: submodel strength is unmatch" if(params.size != submodel[:strength])
+      warn "yactt: submodel strength is unmatch" if(params.size != submodel[:strength])
     end
 
     # 制約条件のセット
