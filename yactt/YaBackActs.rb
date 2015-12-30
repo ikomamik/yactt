@@ -45,7 +45,11 @@ class YaBackActs
     end
 
     # ACTSディレクトリにあるjarを探索（バージョン番号が大きいものを選択）
-    acts_jar = Dir.glob("ACTS/acts_cmd_*.jar").sort[-1]
+    require "pathname"
+    jarfile = "#{File.dirname(__FILE__)}/ACTS/acts_cmd_*.jar"
+    jarfile = Pathname(jarfile).relative_path_from(Pathname(Dir.pwd))
+    acts_jar = Dir.glob(jarfile).sort[-1]
+    raise "ACTS is not installed in #{jarfile}" if !acts_jar
     
     # ACTSのコマンドフラグの設定
     command = "java -Doutput=csv -Drandstar=on -Dchandler=solver"
